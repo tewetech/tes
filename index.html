@@ -29,47 +29,49 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
-@keyframes vibrateBtn {
-    0%, 80%, 100% { transform: translateX(-50%) rotate(0deg); }
-    85% { transform: translateX(-50%) rotate(-5deg); }
-    90% { transform: translateX(-50%) rotate(5deg); }
-    95% { transform: translateX(-50%) rotate(-5deg); }
+@keyframes blinkSlow {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+    50% { opacity: 0.8; box-shadow: 0 0 15px 5px rgba(220, 38, 38, 0.4); }
 }
-.animate-vibrate {
-    animation: vibrateBtn 2s infinite;
+.animate-blink-slow {
+    animation: blinkSlow 2s infinite;
 }
-@keyframes checkPop {
-    0% { transform: scale(0); opacity: 0; }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); opacity: 1; }
+@keyframes popIn {
+    to { transform: scale(1); }
 }
-.animate-check {
-    animation: checkPop 0.5s ease-out forwards;
+.circle-anim {
+    transform: scale(0);
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes draw {
+    to { stroke-dashoffset: 0; }
+}
+.check-anim {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw 0.6s ease-out 0.2s forwards;
 }
 </style>
 </head>
-<body class="text-gray-800 antialiased flex flex-col h-screen overflow-hidden relative text-[10px] md:text-sm">
+<body class="text-gray-800 antialiased flex flex-col h-screen overflow-hidden relative">
 
-<nav class="glass-effect flex-shrink-0 z-50 p-2 md:p-3 flex justify-between items-center w-full border-b border-white/50">
+<nav class="glass-effect flex-shrink-0 z-50 p-3 flex justify-between items-center w-full border-b border-white/50">
     <div class="flex items-center cursor-pointer hover:opacity-80 transition-opacity" onclick="showPublic()">
         <img id="nav-brand-logo" src="" class="h-6 md:h-8 mr-2 rounded object-cover hidden">
         <div class="flex flex-col">
-            <h1 id="nav-brand-text" class="text-sm md:text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 tracking-tight">Tewe Menu</h1>
+            <h1 id="nav-brand-text" class="text-base md:text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 tracking-tight">Tewe Menu</h1>
             <p id="nav-brand-address" class="text-[8px] md:text-[10px] text-gray-500 font-medium leading-none mt-0.5 hidden max-w-[150px] md:max-w-xs truncate"></p>
         </div>
     </div>
     <div class="flex items-center gap-2 md:gap-3">
         <div id="table-number-display" class="hidden text-center">
-            <span id="table-number-text" class="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[9px] md:text-xs font-extrabold px-2.5 py-1 md:py-1.5 rounded-full shadow-sm tracking-wide"></span>
+            <span id="table-number-text" class="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[9px] md:text-xs font-extrabold px-2 md:px-3 py-1 md:py-1.5 rounded-full shadow-sm tracking-wide"></span>
         </div>
         <button onclick="checkAdmin()" id="nav-admin-btn" class="text-gray-600 hover:text-red-600 transition-colors p-1.5 md:p-2 rounded-full bg-white/50 border border-gray-200 shadow-sm flex items-center justify-center">
             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </button>
         <button onclick="toggleDashboardPublic()" id="nav-dashboard-toggle" class="hidden text-gray-600 hover:text-red-600 transition-colors p-1.5 md:p-2 rounded-full bg-white/50 border border-gray-200 shadow-sm items-center justify-center">
             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        </button>
-        <button onclick="showHistoryModal()" id="nav-history-btn" class="text-gray-600 hover:text-red-600 transition-colors p-1.5 md:p-2 rounded-full bg-white/50 border border-gray-200 shadow-sm flex items-center justify-center">
-            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </button>
         <button onclick="logout()" id="nav-logout-top" class="hidden text-gray-600 hover:text-red-600 transition-colors p-1.5 md:p-2 rounded-full bg-white/50 border border-gray-200 shadow-sm items-center justify-center">
             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -81,32 +83,35 @@ body {
     <div id="public-category-filters" class="flex overflow-x-auto gap-2 mb-3 md:mb-4 scrollbar-hide pb-1"></div>
     <div id="public-menu-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5"></div>
     <div class="mt-6 md:mt-8 mb-4 text-center w-full">
-        <span class="text-[9px] md:text-xs text-gray-500 font-medium tracking-wide">Developer By </span>
-        <a href="https://wa.me/6281234567890" target="_blank" class="text-[9px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
+        <span class="text-[10px] md:text-xs text-gray-500 font-medium tracking-wide">Developer By </span>
+        <a href="https://wa.me/6281234567890" target="_blank" class="text-[10px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
     </div>
 </div>
 
-<button id="floating-cart-btn" onclick="showCartModal()" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60] bg-gradient-to-r from-red-600 to-orange-500 text-white rounded-full px-5 py-2.5 md:px-6 md:py-3 shadow-2xl flex items-center gap-1.5 md:gap-2 hover:scale-105 active:scale-95 transition-all hidden border border-white/50 animate-vibrate">
-    <svg class="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-    <span class="font-extrabold text-[10px] md:text-sm">Pesanan</span>
-    <span id="cart-badge" class="bg-white text-red-600 text-[9px] md:text-[11px] font-black h-4 min-w-[16px] md:h-5 md:min-w-[20px] rounded-full flex items-center justify-center px-1 md:px-1.5 shadow-md ml-0.5 md:ml-1">0</span>
+<button id="floating-cart-btn" onclick="showCartModal()" class="animate-blink-slow fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60] bg-gradient-to-r from-red-600 to-orange-500 text-white rounded-full px-5 md:px-6 py-2.5 md:py-3 shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all hidden border border-white/50">
+    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+    <span class="font-extrabold text-xs md:text-sm">Pesanan</span>
+    <span id="cart-badge" class="bg-white text-red-600 text-[10px] md:text-[11px] font-black h-4 md:h-5 min-w-[16px] md:min-w-[20px] rounded-full flex items-center justify-center px-1 md:px-1.5 shadow-md ml-1">0</span>
+</button>
+
+<button id="history-floating-btn" onclick="showHistoryModal()" style="top: 50%;" class="fixed right-0 transform -translate-y-1/2 z-[60] bg-white text-red-600 rounded-l-full px-3 py-3 shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center gap-2 hover:bg-red-50 hover:pl-4 transition-all hidden border-y border-l border-white/50 cursor-grab active:cursor-grabbing">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 </button>
 
 <div id="cart-modal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[100] hidden flex justify-center items-end md:items-center transition-opacity">
     <div class="glass-effect w-full md:w-1/2 lg:w-1/3 bg-white/95 p-4 md:p-5 rounded-t-3xl md:rounded-3xl shadow-2xl max-h-[85vh] flex flex-col border border-white">
         <div class="flex justify-between items-center mb-4 md:mb-5">
-            <h2 class="text-sm md:text-xl font-extrabold text-gray-800 flex items-center gap-2">
+            <h2 id="cart-title" class="text-lg md:text-xl font-extrabold text-gray-800 flex items-center gap-2">
                 <svg class="w-5 h-5 md:w-6 md:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                 Pesanan
-                <span id="cart-table-info" class="text-[9px] md:text-xs text-white bg-red-500 px-2 py-0.5 rounded-full ml-1 hidden"></span>
             </h2>
-            <button onclick="hideCartModal()" class="text-gray-400 hover:text-red-500 text-lg md:text-2xl font-light transition-colors">&times;</button>
+            <button onclick="hideCartModal()" class="text-gray-400 hover:text-red-500 text-xl md:text-2xl font-light transition-colors">&times;</button>
         </div>
         <div id="cart-items" class="overflow-y-auto flex-grow mb-3 space-y-2 md:space-y-3 pr-1 md:pr-2 scrollbar-hide"></div>
         <div class="mb-3 md:mb-4">
-            <input type="text" id="customer-name" class="block px-3 py-2 md:px-4 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/80 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 font-bold" placeholder="Masukkan Nama Anda" required />
+            <input type="text" id="customer-name" class="block px-3 md:px-4 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 font-bold" placeholder="Masukkan Nama Anda" required />
         </div>
-        <button onclick="processCheckout()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white py-2 md:py-3 rounded-xl font-bold text-[10px] md:text-sm shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all mt-auto flex items-center justify-center gap-2">
+        <button onclick="processCheckout()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all mt-auto flex items-center justify-center gap-2">
             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
             Proses Pesanan
         </button>
@@ -116,88 +121,97 @@ body {
 <div id="history-modal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[100] hidden flex justify-center items-end md:items-center transition-opacity">
     <div class="glass-effect w-full md:w-1/2 lg:w-1/3 bg-white/95 p-4 md:p-5 rounded-t-3xl md:rounded-3xl shadow-2xl max-h-[85vh] flex flex-col border border-white">
         <div class="flex justify-between items-center mb-4 md:mb-5">
-            <h2 class="text-sm md:text-xl font-extrabold text-gray-800 flex items-center gap-2">
-                <svg class="w-5 h-5 md:w-6 md:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h2 class="text-lg md:text-xl font-extrabold text-gray-800 flex items-center gap-2">
+                <svg class="w-5 h-5 md:w-6 md:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 Riwayat Pesanan
             </h2>
-            <button onclick="hideHistoryModal()" class="text-gray-400 hover:text-red-500 text-lg md:text-2xl font-light transition-colors">&times;</button>
+            <button onclick="hideHistoryModal()" class="text-gray-400 hover:text-red-500 text-xl md:text-2xl font-light transition-colors">&times;</button>
         </div>
-        <div id="history-items" class="overflow-y-auto flex-grow mb-3 space-y-2 md:space-y-3 pr-1 md:pr-2 scrollbar-hide"></div>
-        <div class="flex gap-2 w-full mt-2 md:mt-4">
-            <button onclick="clearHistory()" class="flex-1 bg-gray-200 text-gray-800 py-2 md:py-3 rounded-xl font-bold text-[10px] md:text-sm hover:bg-gray-300 transition-all">Hapus Semua</button>
-            <button onclick="hideHistoryModal()" class="flex-1 bg-gradient-to-r from-red-600 to-orange-500 text-white py-2 md:py-3 rounded-xl font-bold text-[10px] md:text-sm shadow-lg hover:scale-[1.02] transition-all">Pesanan Baru</button>
-        </div>
+        <div id="history-items" class="overflow-y-auto flex-grow mb-3 space-y-3 pr-1 scrollbar-hide"></div>
+        <button onclick="clearHistory()" class="w-full bg-gray-100 text-gray-600 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm hover:bg-red-50 hover:text-red-600 transform active:scale-95 transition-all mt-auto flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            Hapus Riwayat
+        </button>
     </div>
 </div>
 
-<div id="login-view" class="p-3 md:p-4 w-full h-full flex-col items-center justify-center hidden absolute inset-0 z-50 bg-gradient-to-br from-[#fff5f5] to-[#ffedd5] overflow-y-auto scrollbar-hide">
-    <div class="glass-effect p-4 md:p-5 rounded-3xl shadow-2xl border border-white w-full max-w-[240px] md:max-w-[280px] mx-auto">
-        <div class="flex justify-center mb-4 md:mb-6">
+<div id="login-view" class="p-4 w-full h-full flex-col items-center justify-center hidden absolute inset-0 z-50 bg-gradient-to-br from-[#fff5f5] to-[#ffedd5] overflow-y-auto scrollbar-hide">
+    <div class="glass-effect p-4 md:p-5 rounded-3xl shadow-2xl border border-white w-full max-w-[280px] mx-auto">
+        <div class="flex justify-center mb-5 md:mb-6">
             <img id="login-brand-logo" src="" class="h-12 md:h-16 w-auto object-contain hidden drop-shadow-md">
             <div id="login-default-icon" class="bg-red-100 p-3 md:p-4 rounded-full text-red-600">
                 <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             </div>
         </div>
-        <h2 class="text-sm md:text-xl font-extrabold mb-4 md:mb-5 text-center text-gray-800 tracking-tight">Login Admin</h2>
+        <h2 class="text-lg md:text-xl font-extrabold mb-4 md:mb-5 text-center text-gray-800 tracking-tight">Login Admin</h2>
         <form id="login-form" onsubmit="login(event)" class="space-y-3 md:space-y-4">
             <div class="relative">
-                <input type="text" id="username" class="block px-3 py-2 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                <label for="username" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Username</label>
+                <input type="text" id="username" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                <label for="username" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Username</label>
             </div>
             <div class="relative">
-                <input type="password" id="password" class="block px-3 py-2 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                <label for="password" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Password</label>
+                <input type="password" id="password" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                <label for="password" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Password</label>
             </div>
-            <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white p-2 md:p-3 rounded-xl font-bold text-[10px] md:text-sm shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all mt-3 md:mt-4">Masuk</button>
-            <button type="button" onclick="showPublic()" class="w-full bg-gray-200 text-gray-800 p-2 md:p-3 rounded-xl font-bold text-[10px] md:text-sm shadow-sm hover:scale-[1.02] hover:bg-gray-300 transform active:scale-95 transition-all">Batal</button>
+            <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 rounded-xl font-bold text-xs md:text-sm shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all mt-3 md:mt-4">Masuk</button>
+            <button type="button" onclick="showPublic()" class="w-full bg-gray-200 text-gray-800 p-2.5 md:p-3 rounded-xl font-bold text-xs md:text-sm hover:scale-[1.02] hover:bg-gray-300 transform active:scale-95 transition-all">Batal</button>
         </form>
     </div>
 </div>
 
-<div id="dashboard-view" class="p-2 md:p-4 w-full max-w-7xl mx-auto hidden flex-grow flex-col md:flex-row gap-3 md:gap-5 overflow-hidden relative pb-16 md:pb-4">
-    <div id="admin-sidebar-container" class="glass-effect rounded-t-2xl md:rounded-3xl shadow-[0_-10px_30px_rgba(0,0,0,0.08)] md:shadow-xl border-t md:border border-white w-full md:w-60 md:h-full flex-shrink-0 fixed md:relative bottom-0 left-0 z-[50] md:z-auto bg-white/95 md:bg-transparent overflow-hidden">
-        <h2 class="hidden md:flex text-sm md:text-lg font-extrabold text-gray-800 mb-3 px-4 pt-4 items-center gap-2">
-            <svg class="w-4 h-4 md:w-5 md:h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            Dashboard
-        </h2>
+<div id="dashboard-view" class="p-2 w-full max-w-7xl mx-auto hidden flex-grow flex-col md:flex-row gap-4 md:gap-5 overflow-hidden relative pb-16 md:pb-4">
+    <div id="admin-sidebar" class="glass-effect p-1 md:p-5 rounded-t-3xl md:rounded-3xl shadow-[0_-10px_30px_rgba(0,0,0,0.08)] md:shadow-xl border-t md:border border-white w-full md:w-60 flex flex-col justify-start shrink-0 fixed md:relative bottom-0 left-0 z-[50] md:z-auto bg-white overflow-visible transition-transform duration-300 ease-in-out translate-y-0">
+        <button onclick="toggleSidebar()" class="md:hidden absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 border-b-0 rounded-t-xl px-4 py-1 text-gray-400 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] focus:outline-none">
+            <svg id="sidebar-toggle-icon" class="w-5 h-5 transition-transform duration-300 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
         
-        <div id="nav-slider" class="flex md:flex-col w-[200%] md:w-full transition-transform duration-500 ease-in-out p-1 md:p-4">
-            <div id="nav-group-a" class="w-1/2 md:w-full flex md:flex-col justify-evenly md:justify-start gap-1 md:gap-2 transition-opacity duration-300 px-1 md:px-0">
-                <button onclick="switchTab('tambah-menu')" id="btn-tab-tambah-menu" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-2 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold bg-gradient-to-r from-red-600 to-orange-500 text-white transition-all gap-1 flex-1 md:flex-none">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    <span class="truncate">Tambah<span class="hidden md:inline"> Menu</span></span>
-                </button>
-                <button onclick="switchTab('daftar-menu')" id="btn-tab-daftar-menu" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-2 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 flex-1 md:flex-none">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
-                    <span class="truncate">Daftar<span class="hidden md:inline"> Menu</span></span>
-                </button>
-                <button onclick="switchTab('kategori')" id="btn-tab-kategori" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-2 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 flex-1 md:flex-none">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7ZM7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 2.88-2.88 7.19-5 9.88C9.88 16.19 7 11.88 7 9Z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
-                    <span class="truncate">Kategori</span>
-                </button>
-                <button onclick="slideMobileNav()" class="md:hidden flex flex-col items-center justify-center text-center px-1 py-2 rounded-xl text-[9px] font-bold bg-white text-red-600 border border-red-100 shadow-sm hover:bg-red-50 transition-all gap-1 flex-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
-                    <span class="truncate">Menu Lain</span>
-                </button>
-            </div>
+        <div id="sidebar-content" class="w-full flex flex-col overflow-hidden md:overflow-y-auto pb-1 md:pb-2">
+            <h2 class="hidden md:flex text-base md:text-lg font-extrabold text-gray-800 mb-3 px-2 items-center gap-2">
+                <svg class="w-4 h-4 md:w-5 md:h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </h2>
             
-            <div id="nav-group-b" class="w-1/2 md:w-full flex md:flex-col justify-evenly md:justify-start gap-1 md:gap-2 transition-opacity duration-300 opacity-0 md:opacity-100 px-1 md:px-0">
-                <button onclick="slideMobileNav()" class="md:hidden flex flex-col items-center justify-center text-center px-1 py-2 rounded-xl text-[9px] font-bold bg-white text-gray-600 border border-gray-200 shadow-sm hover:bg-gray-50 transition-all gap-1 flex-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
-                    <span class="truncate">Kembali</span>
-                </button>
-                <button onclick="switchTab('meja')" id="btn-tab-meja" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-2 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 flex-1 md:flex-none">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3z"></path><path d="M13 13h2v2h-2zM17 13h2v2h-2zM15 15h2v2h-2zM13 17h2v2h-2zM17 17h2v2h-2zM19 19h2v2h-2zM15 19h2v2h-2zM19 15h2v2h-2z"></path></svg>
-                    <span class="truncate">Meja</span>
-                </button>
-                <button onclick="switchTab('user')" id="btn-tab-user" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-2 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 flex-1 md:flex-none">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span class="truncate">User</span>
-                </button>
-                <button onclick="switchTab('pengaturan')" id="btn-tab-pengaturan" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-2 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 flex-1 md:flex-none">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    <span class="truncate">Toko</span>
-                </button>
+            <div class="relative w-full overflow-hidden h-[60px] md:h-auto">
+                <div id="nav-slider-container" class="flex flex-row md:flex-col transition-transform duration-500 ease-in-out w-[200%] md:w-full h-full gap-0 md:gap-2">
+                    
+                    <div class="w-1/2 md:w-full flex md:flex-col justify-center md:justify-start gap-1 md:gap-2 px-1 md:px-0 relative">
+                        <button onclick="switchTab('tambah-menu')" id="btn-tab-tambah-menu" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-1.5 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold bg-gradient-to-r from-red-600 to-orange-500 text-white transition-all gap-1 min-w-[50px] flex-1 md:flex-none">
+                            <svg class="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span class="truncate">Tambah<span class="hidden md:inline"> Menu</span></span>
+                        </button>
+                        <button onclick="switchTab('daftar-menu')" id="btn-tab-daftar-menu" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-1.5 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 min-w-[50px] flex-1 md:flex-none">
+                            <svg class="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+                            <span class="truncate">Daftar<span class="hidden md:inline"> Menu</span></span>
+                        </button>
+                        <button onclick="switchTab('kategori')" id="btn-tab-kategori" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-1.5 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 min-w-[50px] flex-1 md:flex-none">
+                            <svg class="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h10a4 4 0 004-4M3 15v-4c0-3.313 2.686-6 6-6h6c3.314 0 6 2.687 6 6v4M3 15h18M9 5v4m6-4v4"></path></svg>
+                            <span class="truncate">Kategori</span>
+                        </button>
+                        <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/90 to-transparent z-10 pointer-events-none md:hidden rounded-r-xl"></div>
+                        <button onclick="slideMobileNav(1)" class="md:hidden z-20 flex flex-col items-center justify-center text-center px-3 py-1.5 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all flex-shrink-0 min-w-[45px]">
+                            <svg class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="w-1/2 md:w-full flex md:flex-col justify-center md:justify-start gap-1 md:gap-2 px-1 md:px-0 relative">
+                        <div class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white/90 to-transparent z-10 pointer-events-none md:hidden rounded-l-xl"></div>
+                        <button onclick="slideMobileNav(0)" class="md:hidden z-20 flex flex-col items-center justify-center text-center px-3 py-1.5 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all flex-shrink-0 min-w-[45px]">
+                            <svg class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <button onclick="switchTab('meja')" id="btn-tab-meja" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-1.5 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 min-w-[50px] flex-1 md:flex-none">
+                            <svg class="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M9 21V9"></path></svg>
+                            <span class="truncate">Meja</span>
+                        </button>
+                        <button onclick="switchTab('user')" id="btn-tab-user" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-1.5 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 min-w-[50px] flex-1 md:flex-none">
+                            <svg class="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            <span class="truncate">User</span>
+                        </button>
+                        <button onclick="switchTab('pengaturan')" id="btn-tab-pengaturan" class="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-1.5 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 min-w-[50px] flex-1 md:flex-none">
+                            <svg class="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <span class="truncate">Toko</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -205,104 +219,104 @@ body {
     <div class="flex-grow flex flex-col w-full overflow-y-auto pb-6 md:pb-0 scrollbar-hide md:pr-1 relative">
         <div id="tab-tambah-menu" class="block space-y-4 md:space-y-6">
             <div class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl" id="form-title">
+                <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl" id="form-title">
                     <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     Tambah Menu Baru
                 </h2>
-                <form id="menu-form" onsubmit="saveMenu(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
+                <form id="menu-form" onsubmit="saveMenu(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 w-full">
                     <div class="relative">
-                        <input type="text" id="menu-name" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                        <label for="menu-name" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Nama Menu</label>
+                        <input type="text" id="menu-name" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                        <label for="menu-name" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Nama Menu</label>
                     </div>
                     <div class="relative">
-                        <input type="text" id="menu-price" oninput="formatPriceInput(this)" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                        <label for="menu-price" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Harga (Rp)</label>
+                        <input type="text" id="menu-price" oninput="formatPriceInput(this)" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                        <label for="menu-price" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Harga (Rp)</label>
                     </div>
                     <div class="relative md:col-span-2">
                         <span class="block text-[10px] md:text-xs font-semibold text-gray-600 mb-1.5 md:mb-2">Kategori</span>
-                        <div id="menu-category-container" class="flex flex-wrap gap-1.5 md:gap-2 w-full max-h-24 md:max-h-32 overflow-y-auto scrollbar-hide"></div>
+                        <div id="menu-category-container" class="flex flex-wrap gap-1.5 md:gap-2 w-full max-h-32 overflow-y-auto scrollbar-hide"></div>
                     </div>
                     <div class="relative md:col-span-2">
                         <span class="block text-[10px] md:text-xs font-semibold text-gray-600 mb-1.5 md:mb-2">Status Menu</span>
                         <div class="flex gap-2 w-full">
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" name="menu-status" value="tersedia" class="peer sr-only" checked>
-                                <div class="text-center px-2 py-2 md:px-3 md:py-3 text-[10px] md:text-sm text-gray-500 bg-white/50 rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">Tersedia</div>
+                                <div class="text-center px-3 py-2.5 md:py-3 text-xs md:text-sm text-gray-500 bg-white rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">Tersedia</div>
                             </label>
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" name="menu-status" value="habis" class="peer sr-only">
-                                <div class="text-center px-2 py-2 md:px-3 md:py-3 text-[10px] md:text-sm text-gray-500 bg-white/50 rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">Habis</div>
+                                <div class="text-center px-3 py-2.5 md:py-3 text-xs md:text-sm text-gray-500 bg-white rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">Habis</div>
                             </label>
                         </div>
                     </div>
                     <div class="relative md:col-span-2">
-                        <textarea id="menu-desc" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium resize-none" placeholder=" " rows="2" required></textarea>
-                        <label for="menu-desc" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:top-2 md:peer-placeholder-shown:top-3 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Deskripsi Menu</label>
+                        <textarea id="menu-desc" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium resize-none" placeholder=" " rows="2" required></textarea>
+                        <label for="menu-desc" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:top-3 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Deskripsi Menu</label>
                     </div>
-                    <div class="md:col-span-2 bg-white/40 p-2 md:p-3 rounded-xl border border-dashed border-gray-400 mt-1">
+                    <div class="md:col-span-2 bg-white/40 p-2.5 md:p-3 rounded-xl border border-dashed border-gray-400 mt-1 md:mt-2">
                         <label class="block text-[10px] md:text-xs font-semibold text-gray-600 mb-1.5 md:mb-2 flex items-center gap-2">
-                            <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                            <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                             Upload Gambar Menu
                         </label>
-                        <input type="file" id="menu-image" accept="image/*" class="w-full text-[9px] md:text-xs text-gray-600 file:mr-2 md:file:mr-4 file:py-1 md:file:py-1.5 file:px-3 md:file:px-4 file:rounded-full file:border-0 file:text-[9px] md:file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer">
+                        <input type="file" id="menu-image" accept="image/*" class="w-full text-[10px] md:text-xs text-gray-600 file:mr-3 md:file:mr-4 file:py-1 file:md:py-1.5 file:px-3 file:md:px-4 file:rounded-full file:border-0 file:text-[10px] file:md:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer">
                     </div>
-                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-[10px] md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
-                        <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                         Simpan Menu
                     </button>
-                    <button type="button" onclick="resetForm()" class="bg-gray-400 text-white p-2.5 md:p-3 text-[10px] md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:bg-gray-500 transform active:scale-95 transition-all hidden flex justify-center items-center gap-2" id="btn-cancel">
-                        <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <button type="button" onclick="resetForm()" class="bg-gray-400 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:bg-gray-500 transform active:scale-95 transition-all hidden flex justify-center items-center gap-2" id="btn-cancel">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         Batal
                     </button>
                 </form>
             </div>
         </div>
 
-        <div id="tab-daftar-menu" class="hidden space-y-4 md:space-y-6 w-full">
-            <div class="glass-effect p-3 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <div class="flex justify-between items-center sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-3 md:px-6 -mx-3 md:-mx-6 -mt-3 md:-mt-6 mb-3 md:mb-4 border-b border-white/50 rounded-t-3xl">
-                    <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2">
+        <div id="tab-daftar-menu" class="hidden space-y-4 md:space-y-6 w-full relative">
+            <div class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full min-h-screen">
+                <div class="flex justify-between items-center sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-3 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-3 md:mb-4 border-b border-white/50 rounded-t-3xl">
+                    <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2">
                         <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                         Manajemen Menu
                     </h2>
-                    <button type="button" onclick="deleteAllMenus()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 py-1 md:px-3 md:py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
+                    <button type="button" onclick="deleteAllMenus()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
                 </div>
-                <div id="admin-menu-filters" class="flex flex-wrap justify-center gap-1.5 md:gap-2 mb-4 md:mb-6"></div>
-                <div id="admin-menu-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4"></div>
+                <div id="admin-menu-filters" class="flex flex-wrap justify-center gap-1.5 md:gap-2 mb-4 md:mb-6 sticky top-[60px] md:top-[70px] z-10 bg-white/70 backdrop-blur-md py-2 md:py-3 -mx-4 md:-mx-6 px-4 md:px-6 shadow-sm border-b border-white/50"></div>
+                <div id="admin-menu-list" class="flex flex-col gap-4 md:gap-6"></div>
             </div>
         </div>
 
         <div id="tab-kategori" class="hidden space-y-4 md:space-y-6 w-full">
             <div class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl" id="cat-form-title">
+                <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl" id="cat-form-title">
                     <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    Tambah Kategori
+                    Tambah Kategori Baru
                 </h2>
-                <form id="category-form" onsubmit="saveCategory(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
+                <form id="category-form" onsubmit="saveCategory(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 w-full">
                     <div class="relative md:col-span-2">
-                        <input type="text" id="cat-name" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                        <label for="cat-name" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Nama Kategori</label>
+                        <input type="text" id="cat-name" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                        <label for="cat-name" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Nama Kategori</label>
                     </div>
-                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-[10px] md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
-                        <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                         Simpan Kategori
                     </button>
-                    <button type="button" onclick="resetCategoryForm()" class="bg-gray-400 text-white p-2.5 md:p-3 text-[10px] md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:bg-gray-500 transform active:scale-95 transition-all hidden flex justify-center items-center gap-2" id="btn-cancel-cat">
-                        <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <button type="button" onclick="resetCategoryForm()" class="bg-gray-400 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:bg-gray-500 transform active:scale-95 transition-all hidden flex justify-center items-center gap-2" id="btn-cancel-cat">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         Batal
                     </button>
                 </form>
             </div>
-            <div class="glass-effect p-3 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <div class="flex justify-between items-center sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-3 md:px-6 -mx-3 md:-mx-6 -mt-3 md:-mt-6 mb-3 md:mb-4 border-b border-white/50 rounded-t-3xl">
-                    <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2">
-                        <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7ZM7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 2.88-2.88 7.19-5 9.88C9.88 16.19 7 11.88 7 9Z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
+            <div class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full">
+                <div class="flex justify-between items-center sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-3 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-3 md:mb-4 border-b border-white/50 rounded-t-3xl">
+                    <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2">
+                        <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h10a4 4 0 004-4M3 15v-4c0-3.313 2.686-6 6-6h6c3.314 0 6 2.687 6 6v4M3 15h18M9 5v4m6-4v4"></path></svg>
                         Manajemen Kategori
                     </h2>
-                    <button type="button" onclick="deleteAllCategories()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 py-1 md:px-3 md:py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
+                    <button type="button" onclick="deleteAllCategories()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
@@ -313,81 +327,81 @@ body {
 
         <div id="tab-meja" class="hidden space-y-4 md:space-y-6 w-full">
             <div class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl">
-                    <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3z"></path><path d="M13 13h2v2h-2zM17 13h2v2h-2zM15 15h2v2h-2zM13 17h2v2h-2zM17 17h2v2h-2zM19 19h2v2h-2zM15 19h2v2h-2zM19 15h2v2h-2z"></path></svg>
+                <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl">
+                    <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M9 21V9"></path></svg>
                     Pengaturan QR Meja
                 </h2>
-                <div class="grid grid-cols-1 gap-3 md:gap-5 mb-3 md:mb-5 w-full">
+                <div class="grid grid-cols-1 gap-4 md:gap-5 mb-4 md:mb-5 w-full">
                     <div class="relative">
-                        <input type="text" id="setting-base-url" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                        <label for="setting-base-url" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Base URL (Contoh: https://tewecafe.com)</label>
+                        <input type="text" id="setting-base-url" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                        <label for="setting-base-url" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Base URL (Contoh: https://tewecafe.com)</label>
                     </div>
                 </div>
-                <button onclick="generateNextTable()" class="w-full md:w-auto bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-[10px] md:text-sm rounded-xl font-bold shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
-                    <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <button onclick="generateNextTable()" class="w-full md:w-auto bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
+                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     Buat QR Meja Selanjutnya
                 </button>
             </div>
-            <div class="glass-effect p-3 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <div class="flex justify-between items-center sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-3 md:px-6 -mx-3 md:-mx-6 -mt-3 md:-mt-6 mb-3 md:mb-4 border-b border-white/50 rounded-t-3xl">
-                    <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2">
-                        <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3z"></path><path d="M13 13h2v2h-2zM17 13h2v2h-2zM15 15h2v2h-2zM13 17h2v2h-2zM17 17h2v2h-2zM19 19h2v2h-2zM15 19h2v2h-2zM19 15h2v2h-2z"></path></svg>
+            <div class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full">
+                <div class="flex justify-between items-center sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-3 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-3 md:mb-4 border-b border-white/50 rounded-t-3xl">
+                    <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2">
+                        <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"></path></svg>
                         Daftar QR Meja
                     </h2>
-                    <button type="button" onclick="deleteAllTables()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 py-1 md:px-3 md:py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
+                    <button type="button" onclick="deleteAllTables()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
                 </div>
-                <div id="admin-table-list" class="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4"></div>
+                <div id="admin-table-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4"></div>
             </div>
         </div>
 
         <div id="tab-user" class="hidden space-y-4 md:space-y-6 w-full">
             <div id="user-form-container" class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl" id="user-form-title">
+                <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl" id="user-form-title">
                     <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
-                    Tambah User
+                    Tambah User Baru
                 </h2>
-                <form id="user-form" onsubmit="saveUser(event)" class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-5 w-full">
+                <form id="user-form" onsubmit="saveUser(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 w-full">
                     <div class="relative">
-                        <input type="text" id="user-u" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                        <label for="user-u" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Username</label>
+                        <input type="text" id="user-u" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                        <label for="user-u" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Username</label>
                     </div>
                     <div class="relative">
-                        <input type="text" id="user-p" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                        <label for="user-p" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Password</label>
+                        <input type="text" id="user-p" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                        <label for="user-p" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Password</label>
                     </div>
                     <div class="relative">
-                        <span class="block text-[10px] md:text-xs font-semibold text-gray-600 mb-1.5 md:mb-1">Role Akses</span>
+                        <span class="block text-[10px] md:text-xs font-semibold text-gray-600 mb-1">Role Akses</span>
                         <div class="flex gap-2 w-full">
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" name="user-role" value="manager" class="peer sr-only" checked>
-                                <div class="text-center px-2 py-1.5 md:px-3 md:py-2 text-[10px] md:text-sm text-gray-500 bg-white/50 rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">Manager</div>
+                                <div class="text-center px-3 py-1.5 md:py-2 text-xs md:text-sm text-gray-500 bg-white rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">Manager</div>
                             </label>
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" name="user-role" value="staff" class="peer sr-only">
-                                <div class="text-center px-2 py-1.5 md:px-3 md:py-2 text-[10px] md:text-sm text-gray-500 bg-white/50 rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">Staff</div>
+                                <div class="text-center px-3 py-1.5 md:py-2 text-xs md:text-sm text-gray-500 bg-white rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">Staff</div>
                             </label>
                         </div>
                     </div>
-                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-[10px] md:text-sm rounded-xl font-bold shadow-lg md:col-span-3 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
-                        <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-3 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                         Simpan Data User
                     </button>
-                    <button type="button" onclick="resetUserForm()" class="bg-gray-400 text-white p-2.5 md:p-3 text-[10px] md:text-sm rounded-xl font-bold shadow-lg md:col-span-3 hover:bg-gray-500 transform active:scale-95 transition-all hidden flex justify-center items-center gap-2" id="btn-cancel-user">
-                        <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <button type="button" onclick="resetUserForm()" class="bg-gray-400 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-3 hover:bg-gray-500 transform active:scale-95 transition-all hidden flex justify-center items-center gap-2" id="btn-cancel-user">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         Batal
                     </button>
                 </form>
             </div>
-            <div class="glass-effect p-3 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <div class="flex justify-between items-center sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-3 md:px-6 -mx-3 md:-mx-6 -mt-3 md:-mt-6 mb-3 md:mb-4 border-b border-white/50 rounded-t-3xl">
-                    <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2">
+            <div class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full">
+                <div class="flex justify-between items-center sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-3 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-3 md:mb-4 border-b border-white/50 rounded-t-3xl">
+                    <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2">
                         <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         Manajemen User
                     </h2>
-                    <button type="button" onclick="deleteAllUsers()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 py-1 md:px-3 md:py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
+                    <button type="button" onclick="deleteAllUsers()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
@@ -398,72 +412,85 @@ body {
 
         <div id="tab-pengaturan" class="hidden space-y-4 md:space-y-6 w-full">
             <div class="glass-effect p-4 md:p-6 rounded-3xl shadow-xl border border-white w-full">
-                <h2 class="text-sm md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl">
+                <h2 class="text-base md:text-lg font-extrabold text-gray-800 flex items-center gap-2 sticky top-0 z-20 bg-white/70 backdrop-blur-md py-3 md:py-4 px-4 md:px-6 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-4 md:mb-5 border-b border-white/50 rounded-t-3xl">
                     <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                     Pengaturan Toko
                 </h2>
-                <form id="settings-form" onsubmit="saveSettings(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
+                <form id="settings-form" onsubmit="saveSettings(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 w-full">
                     <div class="relative md:col-span-2">
-                        <input type="text" id="setting-name" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                        <label for="setting-name" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Nama Toko</label>
+                        <input type="text" id="setting-name" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                        <label for="setting-name" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Nama Toko</label>
                     </div>
                     <div class="relative md:col-span-2">
-                        <input type="text" id="setting-wa" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
-                        <label for="setting-wa" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Nomor WhatsApp (Contoh: 08123456789)</label>
+                        <input type="text" id="setting-wa" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium" placeholder=" " required />
+                        <label for="setting-wa" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Nomor WhatsApp (Contoh: 08123456789)</label>
                     </div>
                     <div class="relative md:col-span-2">
-                        <textarea id="setting-address" class="block px-3 py-2.5 md:py-3 w-full text-[10px] md:text-sm text-gray-900 bg-white/50 rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium resize-none" placeholder=" " rows="2" required></textarea>
-                        <label for="setting-address" class="absolute text-[10px] md:text-sm text-gray-500 duration-300 transform -translate-y-3.5 md:-translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white/90 px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:top-2 md:peer-placeholder-shown:top-3 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-3.5 md:peer-focus:-translate-y-4 rounded-full pointer-events-none shadow-sm">Alamat Toko</label>
+                        <textarea id="setting-address" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white peer transition-all font-medium resize-none" placeholder=" " rows="2" required></textarea>
+                        <label for="setting-address" class="absolute text-xs md:text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 left-2 peer-focus:text-red-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:top-3 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Alamat Toko</label>
                     </div>
-                    <div class="bg-white/40 p-2 md:p-3 rounded-xl border border-dashed border-gray-400">
+                    <div class="bg-white/40 p-2.5 md:p-3 rounded-xl border border-dashed border-gray-400">
                         <label class="block text-[10px] md:text-xs font-semibold text-gray-600 mb-1.5 md:mb-2">Upload Logo Toko</label>
-                        <input type="file" id="setting-logo" accept="image/*" class="w-full text-[9px] md:text-xs text-gray-600 file:mr-2 md:file:mr-4 file:py-1 md:file:py-1.5 file:px-3 md:file:px-4 file:rounded-full file:border-0 file:text-[9px] md:file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer">
+                        <input type="file" id="setting-logo" accept="image/*" class="w-full text-[10px] md:text-xs text-gray-600 file:mr-3 md:file:mr-4 file:py-1 file:md:py-1.5 file:px-3 file:md:px-4 file:rounded-full file:border-0 file:text-[10px] file:md:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer">
                         <div id="preview-logo" class="mt-2 hidden"><img src="" class="h-10 md:h-12 w-auto object-contain rounded"></div>
                     </div>
-                    <div class="bg-white/40 p-2 md:p-3 rounded-xl border border-dashed border-gray-400">
+                    <div class="bg-white/40 p-2.5 md:p-3 rounded-xl border border-dashed border-gray-400">
                         <label class="block text-[10px] md:text-xs font-semibold text-gray-600 mb-1.5 md:mb-2">Upload Favicon Website</label>
-                        <input type="file" id="setting-favicon" accept="image/*" class="w-full text-[9px] md:text-xs text-gray-600 file:mr-2 md:file:mr-4 file:py-1 md:file:py-1.5 file:px-3 md:file:px-4 file:rounded-full file:border-0 file:text-[9px] md:file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer">
-                        <div id="preview-favicon" class="mt-2 hidden"><img src="" class="h-8 md:h-10 w-8 md:w-10 object-contain rounded"></div>
+                        <input type="file" id="setting-favicon" accept="image/*" class="w-full text-[10px] md:text-xs text-gray-600 file:mr-3 md:file:mr-4 file:py-1 file:md:py-1.5 file:px-3 file:md:px-4 file:rounded-full file:border-0 file:text-[10px] file:md:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer">
+                        <div id="preview-favicon" class="mt-2 hidden"><img src="" class="h-8 md:h-10 w-8 md:h-10 object-contain rounded"></div>
                     </div>
-                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-[10px] md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
-                        <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                         Simpan Pengaturan
                     </button>
                 </form>
             </div>
         </div>
         <div class="mt-4 md:mt-6 mb-20 md:mb-6 text-center w-full">
-            <span class="text-[9px] md:text-xs text-gray-500 font-medium tracking-wide">Developer By </span>
-            <a href="https://wa.me/6282323624177" target="_blank" class="text-[9px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
+            <span class="text-[10px] md:text-xs text-gray-500 font-medium tracking-wide">Developer By </span>
+            <a href="https://wa.me/6282323624177" target="_blank" class="text-[10px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
         </div>
     </div>
 </div>
 
 <div id="custom-toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-300 opacity-0 pointer-events-none -translate-y-10">
-    <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-4 md:px-6 py-2 md:py-3 rounded-full shadow-xl font-semibold text-[10px] md:text-sm flex items-center gap-1.5 md:gap-2 border border-gray-700">
+    <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-5 md:px-6 py-2.5 md:py-3 rounded-full shadow-xl font-semibold text-xs md:text-sm flex items-center gap-2 border border-gray-700">
         <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         <span id="toast-message"></span>
     </div>
 </div>
 
+<div id="checkout-confirm-popup" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] hidden flex justify-center items-center transition-opacity">
+    <div class="bg-white p-5 md:p-6 rounded-3xl shadow-2xl max-w-xs md:max-w-sm w-11/12 transform transition-all text-center border border-gray-100">
+        <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-green-100 mb-4 circle-anim">
+            <svg class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path class="check-anim" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h3 class="text-lg md:text-xl font-extrabold text-gray-800 mb-2">Konfirmasi Pesanan</h3>
+        <p class="text-xs md:text-sm text-gray-600 mb-5 md:mb-6 whitespace-pre-line">Data pesanan akan dikirimkan lewat WhatsApp. Silakan datang ke kasir untuk membayar terlebih dahulu dengan menunjukkan bukti WA-nya.</p>
+        <button onclick="confirmExecuteCheckout()" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 md:py-3 rounded-xl font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all text-xs md:text-sm">OK, Mengerti</button>
+    </div>
+</div>
+
 <div id="custom-popup" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] hidden flex justify-center items-center">
-    <div class="bg-white p-5 md:p-6 rounded-3xl shadow-2xl max-w-sm w-11/12 transform transition-all text-center border border-gray-100">
-        <h3 class="text-sm md:text-xl font-extrabold text-gray-800 mb-1.5 md:mb-2" id="popup-title"></h3>
-        <p class="text-[10px] md:text-sm text-gray-600 mb-4 md:mb-6 whitespace-pre-line" id="popup-message"></p>
-        <button onclick="closePopup()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white py-2 md:py-3 rounded-xl font-bold shadow-lg text-[10px] md:text-sm hover:scale-[1.02] active:scale-95 transition-all">Tutup</button>
+    <div class="bg-white p-5 md:p-6 rounded-3xl shadow-2xl max-w-xs md:max-w-sm w-11/12 transform transition-all text-center border border-gray-100">
+        <h3 class="text-lg md:text-xl font-extrabold text-gray-800 mb-2" id="popup-title"></h3>
+        <p class="text-xs md:text-sm text-gray-600 mb-5 md:mb-6 whitespace-pre-line" id="popup-message"></p>
+        <button onclick="closePopup()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all text-xs md:text-sm">Tutup</button>
     </div>
 </div>
 
 <div id="custom-confirm" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[120] hidden flex justify-center items-center">
-    <div class="bg-white p-5 md:p-6 rounded-3xl shadow-2xl max-w-sm w-11/12 transform transition-all text-center border border-gray-100">
-        <div class="mx-auto flex items-center justify-center h-10 w-10 md:h-12 md:w-12 rounded-full bg-green-100 mb-3 md:mb-4">
-            <svg class="h-6 w-6 md:h-8 md:w-8 text-green-500 animate-check" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+    <div class="bg-white p-5 md:p-6 rounded-3xl shadow-2xl max-w-xs md:max-w-sm w-11/12 transform transition-all text-center border border-gray-100">
+        <div class="mx-auto flex items-center justify-center h-10 w-10 md:h-12 md:w-12 rounded-full bg-red-100 mb-3 md:mb-4">
+            <svg class="h-5 w-5 md:h-6 md:w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
         </div>
-        <h3 class="text-sm md:text-lg font-extrabold text-gray-800 mb-1.5 md:mb-2" id="confirm-title">Konfirmasi</h3>
-        <p class="text-[10px] md:text-sm text-gray-600 mb-4 md:mb-6 whitespace-pre-line" id="confirm-message"></p>
+        <h3 class="text-base md:text-lg font-extrabold text-gray-800 mb-2" id="confirm-title">Konfirmasi</h3>
+        <p class="text-xs md:text-sm text-gray-600 mb-5 md:mb-6 whitespace-pre-line" id="confirm-message"></p>
         <div class="flex gap-2 md:gap-3 w-full">
-            <button onclick="closeConfirmPopup()" class="flex-1 bg-gray-200 text-gray-800 py-2 md:py-3 rounded-xl font-bold text-[10px] md:text-sm hover:bg-gray-300 active:scale-95 transition-all">Batal</button>
-            <button onclick="executeConfirm()" class="flex-1 bg-gradient-to-r from-red-600 to-orange-500 text-white py-2 md:py-3 rounded-xl font-bold text-[10px] md:text-sm shadow-lg hover:scale-[1.02] active:scale-95 transition-all">OK</button>
+            <button onclick="closeConfirmPopup()" class="flex-1 bg-gray-200 text-gray-800 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm hover:bg-gray-300 active:scale-95 transition-all">Batal</button>
+            <button onclick="executeConfirm()" class="flex-1 bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm shadow-lg hover:scale-[1.02] active:scale-95 transition-all">Ya, Lanjutkan</button>
         </div>
     </div>
 </div>
@@ -505,6 +532,7 @@ if (!categories || categories.length === 0) {
 
 let menus = JSON.parse(localStorage.getItem('restoMenus')) || [];
 let cart = [];
+let orderHistory = JSON.parse(localStorage.getItem('restoHistory')) || [];
 
 let tablesData = JSON.parse(localStorage.getItem('restoTablesData')) || { baseUrl: '', tables: [] };
 
@@ -520,9 +548,49 @@ let editCategoryId = null;
 let activeAdminMenuFilter = 'all';
 let currentAdminTab = 'tambah-menu';
 let isDashboardView = false;
-let currentSlide = 0;
+let pendingCheckoutData = null;
+let currentMobileSlideIndex = 0;
+let isSidebarOpen = true;
 
 let confirmCallback = null;
+
+const historyBtn = document.getElementById('history-floating-btn');
+let isDraggingHistory = false;
+let startYHistory, startTopHistory;
+
+function onDragStartHistory(e) {
+    isDraggingHistory = true;
+    startYHistory = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    startTopHistory = parseInt(window.getComputedStyle(historyBtn).top, 10);
+    historyBtn.style.transition = 'none';
+    historyBtn.classList.add('scale-105');
+}
+
+function onDragMoveHistory(e) {
+    if (!isDraggingHistory) return;
+    e.preventDefault();
+    let clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    let deltaY = clientY - startYHistory;
+    let newTop = startTopHistory + deltaY;
+    const maxTop = window.innerHeight - historyBtn.offsetHeight;
+    newTop = Math.max(0, Math.min(newTop, maxTop));
+    historyBtn.style.top = newTop + 'px';
+    historyBtn.style.transform = 'none';
+}
+
+function onDragEndHistory() {
+    isDraggingHistory = false;
+    historyBtn.style.transition = 'all 0.3s ease';
+    historyBtn.classList.remove('scale-105');
+}
+
+historyBtn.addEventListener('mousedown', onDragStartHistory);
+document.addEventListener('mousemove', onDragMoveHistory, {passive: false});
+document.addEventListener('mouseup', onDragEndHistory);
+
+historyBtn.addEventListener('touchstart', onDragStartHistory, {passive: false});
+document.addEventListener('touchmove', onDragMoveHistory, {passive: false});
+document.addEventListener('touchend', onDragEndHistory);
 
 function showConfirmPopup(msg, title, callback) {
     document.getElementById('confirm-title').innerText = title;
@@ -638,12 +706,12 @@ function showView(viewId) {
         renderPublic('all');
         updateCartUI();
         isDashboardView = false;
-        document.getElementById('nav-history-btn').classList.remove('hidden');
+        renderHistoryFloatingBtn();
     } else if (viewId === 'dashboard-view') {
         document.getElementById('dashboard-view').classList.remove('hidden');
         document.getElementById('dashboard-view').classList.add('flex');
         floatingBtn.classList.add('hidden');
-        document.getElementById('nav-history-btn').classList.add('hidden');
+        document.getElementById('history-floating-btn').classList.add('hidden');
         
         if (sessionStorage.getItem('role') === 'staff') {
             document.getElementById('user-form-container').classList.add('hidden');
@@ -657,14 +725,13 @@ function showView(viewId) {
         renderCategoryRadios();
         switchTab(currentAdminTab);
         isDashboardView = true;
+        slideMobileNav(0);
     } else if (viewId === 'login-view') {
         document.getElementById('login-view').classList.remove('hidden');
         document.getElementById('login-view').classList.add('flex');
         floatingBtn.classList.add('hidden');
-        document.getElementById('nav-history-btn').classList.add('hidden');
+        document.getElementById('history-floating-btn').classList.add('hidden');
     }
-    
-    updateMobileNavSlider();
 }
 
 function toggleDashboardPublic() {
@@ -675,45 +742,32 @@ function toggleDashboardPublic() {
     }
 }
 
-function slideMobileNav() {
-    const isDesktop = window.innerWidth >= 768;
-    if (isDesktop) return;
-    
-    currentSlide = currentSlide === 0 ? 1 : 0;
-    updateMobileNavSlider();
-}
-
-function updateMobileNavSlider() {
-    const isDesktop = window.innerWidth >= 768;
-    const slider = document.getElementById('nav-slider');
-    const groupA = document.getElementById('nav-group-a');
-    const groupB = document.getElementById('nav-group-b');
-    const isStaff = sessionStorage.getItem('role') === 'staff';
-    const btnTabPengaturan = document.getElementById('btn-tab-pengaturan');
-
-    if (btnTabPengaturan) {
-        if (isStaff) btnTabPengaturan.style.display = 'none';
-        else btnTabPengaturan.style.display = '';
-    }
-
-    if (isDesktop) {
-        slider.style.transform = 'translateX(0)';
-        groupA.style.opacity = '1';
-        groupB.style.opacity = '1';
+function toggleSidebar() {
+    isSidebarOpen = !isSidebarOpen;
+    const sidebar = document.getElementById('admin-sidebar');
+    const icon = document.getElementById('sidebar-toggle-icon');
+    if(isSidebarOpen) {
+        sidebar.classList.remove('translate-y-[calc(100%-2px)]');
+        icon.classList.remove('rotate-180');
     } else {
-        if (currentSlide === 0) {
-            slider.style.transform = 'translateX(0)';
-            groupA.style.opacity = '1';
-            groupB.style.opacity = '0';
-        } else {
-            slider.style.transform = 'translateX(-50%)';
-            groupA.style.opacity = '0';
-            groupB.style.opacity = '1';
-        }
+        sidebar.classList.add('translate-y-[calc(100%-2px)]');
+        icon.classList.add('rotate-180');
     }
 }
 
-window.addEventListener('resize', updateMobileNavSlider);
+function slideMobileNav(index) {
+    currentMobileSlideIndex = index;
+    const sliderContainer = document.getElementById('nav-slider-container');
+    if (window.innerWidth < 768) {
+        sliderContainer.style.transform = `translateX(-${index * 50}%)`;
+    } else {
+        sliderContainer.style.transform = 'none';
+    }
+}
+
+window.addEventListener('resize', () => {
+    slideMobileNav(currentMobileSlideIndex);
+});
 
 function switchTab(tabId) {
     currentAdminTab = tabId;
@@ -724,21 +778,24 @@ function switchTab(tabId) {
     document.getElementById('tab-user').classList.add('hidden');
     document.getElementById('tab-pengaturan').classList.add('hidden');
     
-    const inactiveClass = 'flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-2 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 flex-1 md:flex-none';
-    const activeClass = 'flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-2 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold bg-gradient-to-r from-red-600 to-orange-500 text-white transition-all gap-1 flex-1 md:flex-none';
+    const inactiveClass = 'flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-1.5 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold text-gray-600 hover:bg-white/60 transition-all gap-1 min-w-[50px] flex-1 md:flex-none';
+    const activeClass = 'flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left px-1 md:px-3 py-1.5 md:py-2.5 rounded-xl text-[9px] md:text-sm font-bold bg-gradient-to-r from-red-600 to-orange-500 text-white transition-all gap-1 min-w-[50px] flex-1 md:flex-none';
     
     document.getElementById('btn-tab-tambah-menu').className = inactiveClass;
     document.getElementById('btn-tab-daftar-menu').className = inactiveClass;
     document.getElementById('btn-tab-kategori').className = inactiveClass;
     document.getElementById('btn-tab-meja').className = inactiveClass;
     document.getElementById('btn-tab-user').className = inactiveClass;
-    if(document.getElementById('btn-tab-pengaturan')) document.getElementById('btn-tab-pengaturan').className = inactiveClass;
+    document.getElementById('btn-tab-pengaturan').className = inactiveClass;
     
     document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-    if(document.getElementById(`btn-tab-${tabId}`)) document.getElementById(`btn-tab-${tabId}`).className = activeClass;
+    document.getElementById(`btn-tab-${tabId}`).className = activeClass;
     
     if(tabId === 'meja') {
         renderAdminTables();
+    }
+    if(tabId === 'daftar-menu') {
+        renderAdminMenus();
     }
 }
 
@@ -796,9 +853,37 @@ function formatRupiah(angka) {
 function getBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 600;
+                const MAX_HEIGHT = 600;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.8));
+            };
+            img.onerror = () => reject(new Error('Gagal memproses gambar'));
+            img.src = e.target.result;
+        };
         reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
     });
 }
 
@@ -875,7 +960,7 @@ function resetUserFormState() {
     editUserId = null;
     const roleRadios = document.getElementsByName('user-role');
     for(let radio of roleRadios) radio.disabled = false;
-    document.getElementById('user-form-title').innerHTML = '<svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg> Tambah User';
+    document.getElementById('user-form-title').innerHTML = '<svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg> Tambah User Baru';
     document.getElementById('btn-cancel-user').classList.add('hidden');
     if (sessionStorage.getItem('role') === 'staff') {
         document.getElementById('user-form-container').classList.add('hidden');
@@ -920,24 +1005,24 @@ function renderAdminUsers() {
     displayUsers.forEach(usr => {
         const div = document.createElement('div');
         div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-white flex flex-col gap-2 relative transition-all hover:scale-[1.02]';
-        const roleLabel = usr.role === 'staff' ? '<span class="bg-yellow-100 text-yellow-700 px-2 py-0.5 md:py-1 rounded-md text-[8px] md:text-[10px] font-bold uppercase">Staff</span>' : '<span class="bg-red-100 text-red-700 px-2 py-0.5 md:py-1 rounded-md text-[8px] md:text-[10px] font-bold uppercase">Manager</span>';
+        const roleLabel = usr.role === 'staff' ? '<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md text-[9px] md:text-[10px] font-bold uppercase">Staff</span>' : '<span class="bg-red-100 text-red-700 px-2 py-1 rounded-md text-[9px] md:text-[10px] font-bold uppercase">Manager</span>';
         
         let actionButtons = '';
         if (currentRole === 'manager' || currentId === usr.id) {
-            actionButtons += `<button onclick="editUser('${usr.id}')" class="bg-blue-50 text-blue-600 border border-blue-200 p-1.5 md:p-2 rounded-lg hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-500 hover:text-white hover:border-transparent transition-all shadow-sm"><svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>`;
+            actionButtons += `<button onclick="editUser('${usr.id}')" class="bg-blue-50 text-blue-600 border border-blue-200 p-1.5 md:p-2 rounded-lg hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-500 hover:text-white hover:border-transparent transition-all shadow-sm"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>`;
             
             if (currentRole === 'manager') {
-                actionButtons += `<button onclick="deleteUser('${usr.id}')" class="bg-red-50 text-red-600 border border-red-200 p-1.5 md:p-2 rounded-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-500 hover:text-white hover:border-transparent transition-all shadow-sm"><svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>`;
+                actionButtons += `<button onclick="deleteUser('${usr.id}')" class="bg-red-50 text-red-600 border border-red-200 p-1.5 md:p-2 rounded-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-500 hover:text-white hover:border-transparent transition-all shadow-sm"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>`;
             }
         } else {
-            actionButtons = `<span class="text-[8px] md:text-[10px] text-gray-400 font-semibold bg-gray-100 px-2 py-1 rounded">No Access</span>`;
+            actionButtons = `<span class="text-[9px] md:text-[10px] text-gray-400 font-semibold bg-gray-100 px-2 py-1 rounded">No Access</span>`;
         }
 
         div.innerHTML = `
-            <div class="flex justify-between items-start mb-1 md:mb-2">
+            <div class="flex justify-between items-start mb-2">
                 <div>
-                    <p class="font-bold text-gray-800 text-[10px] md:text-sm break-words">${usr.u}</p>
-                    <p class="font-semibold text-gray-400 text-[8px] md:text-xs mt-0.5 md:mt-1">••••••••</p>
+                    <p class="font-bold text-gray-800 text-xs md:text-sm break-words">${usr.u}</p>
+                    <p class="font-semibold text-gray-400 text-[10px] md:text-xs mt-1">••••••••</p>
                 </div>
                 ${roleLabel}
             </div>
@@ -973,6 +1058,7 @@ function saveCategory(e) {
     renderCategoryRadios();
     renderAdminCategoryFilters();
     renderPublicCategories();
+    renderAdminMenus();
     showToast('Kategori berhasil disimpan!');
 }
 
@@ -995,7 +1081,7 @@ function resetCategoryForm() {
 function resetCategoryFormState() {
     isEditingCategory = false;
     editCategoryId = null;
-    document.getElementById('cat-form-title').innerHTML = '<svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Tambah Kategori';
+    document.getElementById('cat-form-title').innerHTML = '<svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Tambah Kategori Baru';
     document.getElementById('btn-cancel-cat').classList.add('hidden');
 }
 
@@ -1044,10 +1130,10 @@ function renderAdminCategories() {
         const div = document.createElement('div');
         div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-white flex justify-between items-center transition-all hover:scale-[1.02]';
         div.innerHTML = `
-            <span class="font-bold text-gray-800 text-[10px] md:text-sm break-words">${cat.name}</span>
+            <span class="font-bold text-gray-800 text-xs md:text-sm break-words">${cat.name}</span>
             <div class="flex gap-1">
-                <button onclick="editCategory('${cat.id}')" class="bg-blue-50 text-blue-600 border border-blue-200 p-1 md:p-1.5 rounded-lg hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-500 hover:text-white transition-all"><svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
-                <button onclick="deleteCategory('${cat.id}')" class="bg-red-50 text-red-600 border border-red-200 p-1 md:p-1.5 rounded-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-500 hover:text-white transition-all"><svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                <button onclick="editCategory('${cat.id}')" class="bg-blue-50 text-blue-600 border border-blue-200 p-1.5 rounded-lg hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-500 hover:text-white transition-all"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                <button onclick="deleteCategory('${cat.id}')" class="bg-red-50 text-red-600 border border-red-200 p-1.5 rounded-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-500 hover:text-white transition-all"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
             </div>
         `;
         container.appendChild(div);
@@ -1061,9 +1147,9 @@ function renderCategoryRadios() {
     categories.forEach((cat, i) => {
         const isChecked = selectedVal ? (cat.id === selectedVal) : (i === 0);
         container.innerHTML += `
-        <label class="cursor-pointer mb-1.5 md:mb-2">
+        <label class="cursor-pointer mb-1 md:mb-2">
             <input type="radio" name="menu-category" value="${cat.id}" class="peer sr-only" ${isChecked ? 'checked' : ''}>
-            <div class="px-2 py-1.5 md:px-3 md:py-2 text-[9px] md:text-xs text-gray-500 bg-white/50 rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">${cat.name}</div>
+            <div class="px-2.5 py-1.5 md:px-3 md:py-2 text-[10px] md:text-xs text-gray-500 bg-white rounded-xl border border-gray-200 peer-checked:bg-gradient-to-r peer-checked:from-red-600 peer-checked:to-orange-500 peer-checked:text-white peer-checked:font-bold transition-all shadow-sm">${cat.name}</div>
         </label>`;
     });
 }
@@ -1076,8 +1162,8 @@ function renderAdminCategoryFilters() {
     const btnAll = document.createElement('button');
     btnAll.onclick = () => { activeAdminMenuFilter = 'all'; renderAdminCategoryFilters(); renderAdminMenus(); };
     btnAll.className = activeAdminMenuFilter === 'all' 
-        ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 md:px-5 py-1 md:py-1.5 rounded-full text-[9px] md:text-xs font-semibold shadow-md transform active:scale-95 transition-all' 
-        : 'bg-white/50 text-red-600 px-3 md:px-5 py-1 md:py-1.5 rounded-full text-[9px] md:text-xs font-semibold border border-red-100 hover:bg-white/80 transform active:scale-95 transition-all';
+        ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold shadow-md transform active:scale-95 transition-all' 
+        : 'bg-white text-red-600 px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold border border-red-100 hover:bg-gray-50 transform active:scale-95 transition-all';
     btnAll.innerText = 'Semua';
     container.appendChild(btnAll);
 
@@ -1085,8 +1171,8 @@ function renderAdminCategoryFilters() {
         const btn = document.createElement('button');
         btn.onclick = () => { activeAdminMenuFilter = cat.id; renderAdminCategoryFilters(); renderAdminMenus(); };
         btn.className = activeAdminMenuFilter === cat.id 
-            ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 md:px-5 py-1 md:py-1.5 rounded-full text-[9px] md:text-xs font-semibold shadow-md transform active:scale-95 transition-all' 
-            : 'bg-white/50 text-red-600 px-3 md:px-5 py-1 md:py-1.5 rounded-full text-[9px] md:text-xs font-semibold border border-red-100 hover:bg-white/80 transform active:scale-95 transition-all';
+            ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold shadow-md transform active:scale-95 transition-all' 
+            : 'bg-white text-red-600 px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold border border-red-100 hover:bg-gray-50 transform active:scale-95 transition-all';
         btn.innerText = cat.name;
         container.appendChild(btn);
     });
@@ -1100,8 +1186,8 @@ function renderPublicCategories(activeFilter = 'all') {
     const btnAll = document.createElement('button');
     btnAll.onclick = () => renderPublic('all');
     btnAll.className = activeFilter === 'all'
-        ? 'px-3 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-bold whitespace-nowrap shadow-sm transition-all bg-gradient-to-r from-red-600 to-orange-500 text-white'
-        : 'px-3 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-bold whitespace-nowrap shadow-sm transition-all bg-white/60 text-gray-600 border border-white hover:bg-white';
+        ? 'px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold whitespace-nowrap shadow-sm transition-all bg-gradient-to-r from-red-600 to-orange-500 text-white'
+        : 'px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold whitespace-nowrap shadow-sm transition-all bg-white/60 text-gray-600 border border-white hover:bg-white';
     btnAll.innerText = 'Semua';
     container.appendChild(btnAll);
 
@@ -1109,8 +1195,8 @@ function renderPublicCategories(activeFilter = 'all') {
         const btn = document.createElement('button');
         btn.onclick = () => renderPublic(cat.id);
         btn.className = activeFilter === cat.id
-            ? 'px-3 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-bold whitespace-nowrap shadow-sm transition-all bg-gradient-to-r from-red-600 to-orange-500 text-white'
-            : 'px-3 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-bold whitespace-nowrap shadow-sm transition-all bg-white/60 text-gray-600 border border-white hover:bg-white';
+            ? 'px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold whitespace-nowrap shadow-sm transition-all bg-gradient-to-r from-red-600 to-orange-500 text-white'
+            : 'px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold whitespace-nowrap shadow-sm transition-all bg-white/60 text-gray-600 border border-white hover:bg-white';
         btn.innerText = cat.name;
         container.appendChild(btn);
     });
@@ -1120,7 +1206,7 @@ async function saveMenu(e) {
     e.preventDefault();
     const name = document.getElementById('menu-name').value;
     const priceString = document.getElementById('menu-price').value;
-    const price = parseInt(priceString.replace(/\./g, ''));
+    const price = parseInt(priceString.replace(/[^0-9]/g, ''));
     
     const category = document.querySelector('input[name="menu-category"]:checked')?.value || '';
     if(!category) {
@@ -1134,7 +1220,12 @@ async function saveMenu(e) {
 
     let imageBase64 = '';
     if (fileInput.files.length > 0) {
-        imageBase64 = await getBase64(fileInput.files[0]);
+        try {
+            imageBase64 = await getBase64(fileInput.files[0]);
+        } catch (err) {
+            showToast('Gagal memproses gambar. Coba gambar lain.');
+            return;
+        }
     }
 
     if (isEditing) {
@@ -1163,12 +1254,6 @@ async function saveMenu(e) {
 
     localStorage.setItem('restoMenus', JSON.stringify(menus));
     document.getElementById('menu-form').reset();
-    
-    if (!isEditing && category) {
-        const catRadio = document.querySelector(`input[name="menu-category"][value="${category}"]`);
-        if (catRadio) catRadio.checked = true;
-    }
-    
     renderAdminMenus();
     showToast('Menu berhasil disimpan!');
 }
@@ -1244,44 +1329,66 @@ function toggleStatus(id) {
 function renderAdminMenus() {
     const container = document.getElementById('admin-menu-list');
     container.innerHTML = '';
-    let filteredMenus = menus;
+    
+    let filteredMenus = menus.slice().sort((a, b) => a.name.localeCompare(b.name));
+    
     if (activeAdminMenuFilter !== 'all') {
-        filteredMenus = menus.filter(m => m.category === activeAdminMenuFilter);
+        filteredMenus = filteredMenus.filter(m => m.category === activeAdminMenuFilter);
     }
     
     if (filteredMenus.length === 0) {
-        container.innerHTML = '<div class="col-span-full text-center py-6 text-gray-500 font-medium text-[10px] md:text-sm">Belum ada data menu.</div>';
+        container.innerHTML = '<div class="w-full text-center py-10 text-gray-500 font-medium text-xs md:text-sm">Belum ada data menu.</div>';
         return;
     }
 
-    filteredMenus.forEach(menu => {
-        const div = document.createElement('div');
-        div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-white flex flex-col gap-2 md:gap-3 relative transition-all hover:scale-[1.02]';
-        const isTersedia = menu.status === 'tersedia';
-        const catObj = categories.find(c => c.id === menu.category);
-        const catName = catObj ? catObj.name : menu.category;
-        
-        div.innerHTML = `
-            <div class="flex items-center gap-2 md:gap-3">
-                <img src="${menu.image}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-xl shadow-sm border border-gray-200">
-                <div class="flex-grow">
-                    <h3 class="font-bold text-gray-800 text-[10px] md:text-sm break-words">${menu.name}</h3>
-                    <p class="font-semibold text-red-600 text-[9px] md:text-xs mt-0.5">${formatRupiah(menu.price)}</p>
-                    <span class="text-[8px] md:text-[9px] uppercase tracking-wider font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded mt-1 inline-block">${catName}</span>
-                </div>
-            </div>
-            <div class="flex justify-between items-center mt-auto pt-2 border-t border-gray-100">
-                <button onclick="toggleStatus('${menu.id}')" class="px-2 py-1 rounded-md text-[8px] md:text-[10px] font-bold tracking-wide shadow-sm transition-colors ${isTersedia ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}">
-                    ${menu.status.toUpperCase()}
-                </button>
-                <div class="flex gap-1">
-                    <button onclick="editMenu('${menu.id}')" class="bg-blue-50 text-blue-600 border border-blue-200 p-1 md:p-1.5 rounded-lg hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-500 hover:text-white transition-all"><svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
-                    <button onclick="deleteMenu('${menu.id}')" class="bg-red-50 text-red-600 border border-red-200 p-1 md:p-1.5 rounded-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-500 hover:text-white transition-all"><svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                </div>
-            </div>
-        `;
-        container.appendChild(div);
+    const groups = {};
+    filteredMenus.forEach(m => {
+        if(!groups[m.category]) groups[m.category] = [];
+        groups[m.category].push(m);
     });
+
+    for (let catId in groups) {
+        const catObj = categories.find(c => c.id === catId);
+        const catName = catObj ? catObj.name : catId;
+
+        const groupWrapper = document.createElement('div');
+        groupWrapper.className = 'w-full flex flex-col mb-4';
+        
+        groupWrapper.innerHTML = `<h3 class="text-sm md:text-base font-extrabold text-gray-800 mb-3 border-b-2 border-red-500 self-start pb-1 uppercase tracking-wider">${catName}</h3>`;
+
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 w-full';
+
+        groups[catId].forEach(menu => {
+            const isTersedia = menu.status === 'tersedia';
+            
+            const div = document.createElement('div');
+            div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-white flex flex-col gap-2 md:gap-3 relative transition-all hover:scale-[1.02] bg-white/70';
+            
+            div.innerHTML = `
+                <div class="flex items-center gap-2 md:gap-3">
+                    <img src="${menu.image}" class="w-14 h-14 md:w-16 md:h-16 object-cover rounded-xl shadow-sm border border-gray-200">
+                    <div class="flex-grow overflow-hidden">
+                        <h3 class="font-bold text-gray-800 text-xs md:text-sm truncate">${menu.name}</h3>
+                        <p class="font-semibold text-red-600 text-[10px] md:text-xs mt-0.5">${formatRupiah(menu.price)}</p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-auto pt-2 border-t border-gray-100">
+                    <button onclick="toggleStatus('${menu.id}')" class="px-1.5 md:px-2 py-1 rounded-md text-[9px] md:text-[10px] font-bold tracking-wide shadow-sm transition-colors ${isTersedia ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}">
+                        ${menu.status.toUpperCase()}
+                    </button>
+                    <div class="flex gap-1">
+                        <button onclick="editMenu('${menu.id}')" class="bg-blue-50 text-blue-600 border border-blue-200 p-1.5 rounded-lg hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-500 hover:text-white transition-all"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                        <button onclick="deleteMenu('${menu.id}')" class="bg-red-50 text-red-600 border border-red-200 p-1.5 rounded-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-500 hover:text-white transition-all"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+        
+        groupWrapper.appendChild(grid);
+        container.appendChild(groupWrapper);
+    }
 }
 
 function generateNextTable() {
@@ -1340,7 +1447,7 @@ function renderAdminTables() {
     document.getElementById('setting-base-url').value = tablesData.baseUrl;
     
     if(tablesData.tables.length === 0) {
-        container.innerHTML = '<div class="col-span-full text-center py-6 text-gray-500 font-medium text-[10px] md:text-sm">Belum ada data meja.</div>';
+        container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 font-medium text-xs md:text-sm">Belum ada data meja.</div>';
         return;
     }
     
@@ -1348,12 +1455,12 @@ function renderAdminTables() {
         const div = document.createElement('div');
         div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-white flex flex-col items-center text-center gap-2 transition-all hover:scale-[1.02]';
         div.innerHTML = `
-            <span class="font-bold text-gray-800 text-[10px] md:text-sm w-full truncate">${t.name}</span>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(t.url)}" class="w-16 h-16 md:w-24 md:h-24 object-contain bg-white p-1 border rounded shadow-sm">
-            <a href="${t.url}" target="_blank" class="text-[8px] md:text-[10px] text-red-600 hover:underline truncate w-full px-1 md:px-2">${t.url}</a>
-            <div class="flex gap-2 w-full justify-center mt-auto pt-2 md:pt-3 border-t border-gray-100">
-                <button onclick="downloadQR('${t.url}', '${t.name}')" class="bg-green-50 text-green-600 border border-green-200 p-1 md:p-1.5 rounded-lg w-full flex justify-center hover:bg-gradient-to-r hover:from-green-600 hover:to-green-500 hover:text-white transition-all"><svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
-                <button onclick="deleteTable('${t.id}')" class="bg-red-50 text-red-600 border border-red-200 p-1 md:p-1.5 rounded-lg w-full flex justify-center hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-500 hover:text-white transition-all"><svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+            <span class="font-bold text-gray-800 text-xs md:text-sm w-full truncate">${t.name}</span>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(t.url)}" class="w-20 h-20 md:w-24 md:h-24 object-contain bg-white p-1 border rounded shadow-sm">
+            <a href="${t.url}" target="_blank" class="text-[9px] md:text-[10px] text-red-600 hover:underline truncate w-full px-2">${t.url}</a>
+            <div class="flex gap-2 w-full justify-center mt-auto pt-2.5 md:pt-3 border-t border-gray-100">
+                <button onclick="downloadQR('${t.url}', '${t.name}')" class="bg-green-50 text-green-600 border border-green-200 p-1.5 rounded-lg w-full flex justify-center hover:bg-gradient-to-r hover:from-green-600 hover:to-green-500 hover:text-white transition-all"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+                <button onclick="deleteTable('${t.id}')" class="bg-red-50 text-red-600 border border-red-200 p-1.5 rounded-lg w-full flex justify-center hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-500 hover:text-white transition-all"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
             </div>
         `;
         container.appendChild(div);
@@ -1386,7 +1493,7 @@ function renderPublic(filter) {
     const filteredMenus = filter === 'all' ? menus : menus.filter(m => m.category === filter);
 
     if (filteredMenus.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400 font-semibold text-[10px] md:text-sm">Menu untuk kategori ini belum tersedia.</div>`;
+        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400 font-semibold text-xs md:text-sm">Menu untuk kategori ini belum tersedia.</div>`;
         return;
     }
 
@@ -1405,18 +1512,18 @@ function renderPublic(filter) {
                 <img src="${menu.image}" class="w-full h-full object-cover">
                 ${isHabis ? '<div class="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px] flex items-center justify-center"><span class="text-white font-extrabold tracking-widest text-[9px] md:text-lg bg-red-500/90 px-2 md:px-4 py-1 md:py-1.5 rounded-lg shadow-lg border border-red-400">HABIS</span></div>' : ''}
             </div>
-            <div class="p-2.5 md:p-4 flex flex-col flex-grow bg-white/30">
+            <div class="p-2 md:p-4 flex flex-col flex-grow bg-white/30">
                 <div class="flex flex-col md:flex-row justify-between items-start mb-1 md:mb-1.5 gap-1 md:gap-2">
-                    <h3 class="text-[11px] md:text-base font-extrabold text-gray-800 leading-tight">${menu.name}</h3>
+                    <h3 class="text-xs md:text-base font-extrabold text-gray-800 leading-tight">${menu.name}</h3>
                     <span class="text-[7px] md:text-[9px] font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded whitespace-nowrap">${catName}</span>
                 </div>
-                <p class="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 font-black text-[11px] md:text-base mb-1 md:mb-2">${formatRupiah(menu.price)}</p>
+                <p class="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 font-black text-xs md:text-base mb-1 md:mb-2">${formatRupiah(menu.price)}</p>
                 <p class="text-gray-500 text-[9px] md:text-xs mb-2 md:mb-4 flex-grow leading-relaxed line-clamp-2">${menu.desc}</p>
                 
                 <div class="flex items-center justify-between bg-white/50 rounded-lg md:rounded-xl p-1 shadow-inner border border-gray-200 mt-auto">
-                    <button onclick="updateStepper('${menu.id}', -1)" class="w-6 h-6 md:w-10 md:h-10 rounded-md md:rounded-xl bg-white text-gray-800 font-extrabold text-[10px] md:text-lg shadow-sm hover:text-red-500 hover:bg-gray-50 transition-colors" ${isHabis ? 'disabled' : ''}>&minus;</button>
-                    <span id="qty-${menu.id}" class="font-extrabold w-5 md:w-10 text-center text-red-700 text-[10px] md:text-base">${qty}</span>
-                    <button onclick="updateStepper('${menu.id}', 1)" class="w-6 h-6 md:w-10 md:h-10 rounded-md md:rounded-xl bg-gradient-to-r from-red-600 to-orange-500 text-white font-extrabold text-[10px] md:text-lg shadow-sm hover:scale-[1.05] active:scale-95 transition-all" ${isHabis ? 'disabled' : ''}>&plus;</button>
+                    <button onclick="updateStepper('${menu.id}', -1)" class="w-6 h-6 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-white text-gray-800 font-extrabold text-sm md:text-lg shadow-sm hover:text-red-500 hover:bg-gray-50 transition-colors flex items-center justify-center" ${isHabis ? 'disabled' : ''}>&minus;</button>
+                    <span id="qty-${menu.id}" class="font-extrabold w-6 md:w-10 text-center text-red-700 text-xs md:text-base">${qty}</span>
+                    <button onclick="updateStepper('${menu.id}', 1)" class="w-6 h-6 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-gradient-to-r from-red-600 to-orange-500 text-white font-extrabold text-sm md:text-lg shadow-sm hover:scale-[1.05] active:scale-95 transition-all flex items-center justify-center" ${isHabis ? 'disabled' : ''}>&plus;</button>
                 </div>
             </div>
         `;
@@ -1466,11 +1573,13 @@ function updateCartUI() {
 }
 
 function showCartModal() {
-    document.getElementById('cart-modal').classList.remove('hidden');
-    if (tableNumber) {
-        document.getElementById('cart-table-info').innerText = 'Meja: ' + tableNumber;
-        document.getElementById('cart-table-info').classList.remove('hidden');
+    const titleElement = document.getElementById('cart-title');
+    if(tableNumber) {
+        titleElement.innerHTML = `<svg class="w-5 h-5 md:w-6 md:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> Pesanan - Meja ${tableNumber}`;
+    } else {
+        titleElement.innerHTML = `<svg class="w-5 h-5 md:w-6 md:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> Pesanan`;
     }
+    document.getElementById('cart-modal').classList.remove('hidden');
     renderCartItems();
 }
 
@@ -1488,7 +1597,7 @@ function renderCartItems() {
                 <div class="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mb-2 md:mb-3">
                     <svg class="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                 </div>
-                <p class="text-center text-[9px] md:text-xs text-gray-500 font-semibold">Pesanan Anda masih kosong</p>
+                <p class="text-center text-[10px] md:text-xs text-gray-500 font-semibold">Pesanan Anda masih kosong</p>
             </div>`;
         setTimeout(hideCartModal, 1500);
         return;
@@ -1507,10 +1616,10 @@ function renderCartItems() {
                     <p class="text-red-600 text-[10px] md:text-xs font-bold mt-0.5">${formatRupiah(item.price)}</p>
                 </div>
             </div>
-            <div class="flex items-center gap-1.5 md:gap-2 bg-gray-100 rounded-full p-1 shadow-inner">
-                <button onclick="updateStepper('${item.id}', -1)" class="w-6 h-6 md:w-7 md:h-7 rounded-full bg-white text-gray-700 font-bold flex items-center justify-center shadow-sm hover:text-red-500 transition-colors">&minus;</button>
+            <div class="flex items-center gap-1 md:gap-2 bg-gray-100 rounded-full p-1 shadow-inner">
+                <button onclick="updateStepper('${item.id}', -1)" class="w-5 h-5 md:w-7 md:h-7 rounded-full bg-white text-gray-700 font-bold flex items-center justify-center shadow-sm hover:text-red-500 transition-colors text-xs md:text-sm">&minus;</button>
                 <span class="font-bold w-4 md:w-5 text-center text-[10px] md:text-xs text-gray-800">${item.qty}</span>
-                <button onclick="updateStepper('${item.id}', 1)" class="w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold flex items-center justify-center shadow-sm hover:scale-105 transition-all">&plus;</button>
+                <button onclick="updateStepper('${item.id}', 1)" class="w-5 h-5 md:w-7 md:h-7 rounded-full bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold flex items-center justify-center shadow-sm hover:scale-105 transition-all text-xs md:text-sm">&plus;</button>
             </div>
         `;
         container.appendChild(div);
@@ -1518,78 +1627,8 @@ function renderCartItems() {
     
     const totalDiv = document.createElement('div');
     totalDiv.className = 'flex justify-between items-center bg-red-50 p-2.5 md:p-3 rounded-2xl border border-red-100 mt-2';
-    totalDiv.innerHTML = `<span class="font-extrabold text-gray-800 text-[11px] md:text-sm">Total Pesanan</span><span class="font-black text-red-600 text-[11px] md:text-base">${formatRupiah(cartTotalAmt)}</span>`;
+    totalDiv.innerHTML = `<span class="font-extrabold text-gray-800 text-xs md:text-sm">Total Belanja</span><span class="font-black text-red-600 text-sm md:text-base">${formatRupiah(cartTotalAmt)}</span>`;
     container.appendChild(totalDiv);
-}
-
-function saveHistory(order) {
-    let history = JSON.parse(localStorage.getItem('restoHistory') || '[]');
-    const now = Date.now();
-    history = history.filter(h => now - h.time <= 3 * 60 * 60 * 1000);
-    history.push(order);
-    localStorage.setItem('restoHistory', JSON.stringify(history));
-}
-
-function showHistoryModal() {
-    document.getElementById('history-modal').classList.remove('hidden');
-    renderHistoryItems();
-}
-
-function hideHistoryModal() {
-    document.getElementById('history-modal').classList.add('hidden');
-}
-
-function renderHistoryItems() {
-    const container = document.getElementById('history-items');
-    container.innerHTML = '';
-    
-    let history = JSON.parse(localStorage.getItem('restoHistory') || '[]');
-    const now = Date.now();
-    history = history.filter(h => now - h.time <= 3 * 60 * 60 * 1000);
-    localStorage.setItem('restoHistory', JSON.stringify(history));
-
-    if (history.length === 0) {
-        container.innerHTML = `
-            <div class="flex flex-col items-center justify-center py-6 md:py-8">
-                <p class="text-center text-[9px] md:text-xs text-gray-500 font-semibold">Belum ada riwayat pesanan.</p>
-            </div>`;
-        return;
-    }
-
-    history.forEach(order => {
-        const d = new Date(order.time);
-        const timeStr = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-        
-        let itemsHtml = '';
-        order.items.forEach(i => {
-            itemsHtml += `<div class="text-[9px] md:text-xs text-gray-600 flex justify-between"><span>${i.name} x${i.qty}</span><span>${formatRupiah(i.price * i.qty)}</span></div>`;
-        });
-
-        const div = document.createElement('div');
-        div.className = 'bg-white/60 p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2';
-        div.innerHTML = `
-            <div class="flex justify-between items-center border-b border-gray-100 pb-1.5">
-                <span class="font-extrabold text-[10px] md:text-xs text-gray-800">${order.name} <span class="font-normal text-gray-500 ml-1">${timeStr}</span></span>
-                ${order.table ? `<span class="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-[8px] md:text-[10px] font-bold">Meja ${order.table}</span>` : ''}
-            </div>
-            <div class="flex flex-col gap-0.5">
-                ${itemsHtml}
-            </div>
-            <div class="flex justify-between items-center border-t border-gray-100 pt-1.5 mt-0.5">
-                <span class="font-bold text-gray-800 text-[10px] md:text-xs">Total</span>
-                <span class="font-black text-red-600 text-[10px] md:text-xs">${formatRupiah(order.total)}</span>
-            </div>
-        `;
-        container.appendChild(div);
-    });
-}
-
-function clearHistory() {
-    showConfirmPopup('Apakah Anda yakin ingin menghapus semua riwayat pesanan?', 'Hapus Riwayat', () => {
-        localStorage.removeItem('restoHistory');
-        renderHistoryItems();
-        showToast('Riwayat pesanan berhasil dihapus');
-    });
 }
 
 function processCheckout() {
@@ -1602,42 +1641,133 @@ function processCheckout() {
     }
     
     const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const confirmMsg = 'Data pesanan akan dikirimkan lewat WA.\nSilakan datang ke kasir untuk membayar terlebih dahulu dengan menunjukan bukti WA nya.\n\nLanjutkan pesanan?';
     
-    showConfirmPopup(confirmMsg, 'Konfirmasi Pesanan', () => {
-        
-        const orderData = {
-            id: Date.now(),
-            items: [...cart],
-            total: total,
-            name: customerNameInput,
-            table: tableNumber || '',
-            time: Date.now()
-        };
-        saveHistory(orderData);
-        
-        let waText = `Halo, saya ingin memesan:\n\nNama Pemesan: ${customerNameInput}\n`;
-        if (tableNumber) waText += `Meja: ${tableNumber}\n`;
-        waText += `\nPesanan:\n`;
-        cart.forEach(item => {
-            waText += `- ${item.name} (${item.qty}x) = ${formatRupiah(item.price * item.qty)}\n`;
-        });
-        waText += `\nTotal Pembayaran: *${formatRupiah(total)}*`;
-        
-        if (storeSettings.wa) {
-            let waNum = storeSettings.wa.replace(/^0/, '62').replace(/\D/g, '');
-            window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(waText)}`, '_blank');
+    let waText = `Halo, saya ingin memesan:\n\nNama Pemesan: ${customerNameInput}\n`;
+    if (tableNumber) waText += `Meja: ${tableNumber}\n`;
+    waText += `\nPesanan:\n`;
+    
+    const savedItems = [];
+    cart.forEach(item => {
+        waText += `- ${item.name} (${item.qty}x) = ${formatRupiah(item.price * item.qty)}\n`;
+        savedItems.push({ name: item.name, price: item.price, qty: item.qty });
+    });
+    waText += `\nTotal Pembayaran: *${formatRupiah(total)}*`;
+    
+    const dateObj = new Date();
+    const dateStr = dateObj.toLocaleDateString('id-ID') + ' ' + dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+    
+    pendingCheckoutData = {
+        waText: waText,
+        historyObj: {
+            id: 'ord_' + Date.now(),
+            date: dateStr,
+            customerName: customerNameInput,
+            tableNumber: tableNumber || '-',
+            items: savedItems,
+            total: total
         }
+    };
+    
+    hideCartModal();
+    document.getElementById('checkout-confirm-popup').classList.remove('hidden');
+    
+    const animCheck = document.querySelector('.check-anim');
+    const animCircle = document.querySelector('.circle-anim');
+    if(animCheck) {
+        animCheck.style.animation = 'none';
+        animCheck.offsetHeight;
+        animCheck.style.animation = 'draw 0.6s ease-out 0.2s forwards';
+    }
+    if(animCircle) {
+        animCircle.style.animation = 'none';
+        animCircle.offsetHeight;
+        animCircle.style.animation = 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+    }
+}
+
+function confirmExecuteCheckout() {
+    if(!pendingCheckoutData) return;
+    
+    orderHistory.unshift(pendingCheckoutData.historyObj);
+    localStorage.setItem('restoHistory', JSON.stringify(orderHistory));
+    
+    if (storeSettings.wa) {
+        let waNum = storeSettings.wa.replace(/^0/, '62').replace(/\D/g, '');
+        window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(pendingCheckoutData.waText)}`, '_blank');
+    } else {
+        showToast('Nomor WhatsApp toko belum diatur.');
+    }
+    
+    cart = [];
+    const qtySpans = document.querySelectorAll('[id^="qty-"]');
+    qtySpans.forEach(span => span.innerText = '0');
+    document.getElementById('customer-name').value = '';
+    updateCartUI();
+    
+    document.getElementById('checkout-confirm-popup').classList.add('hidden');
+    pendingCheckoutData = null;
+    
+    renderHistoryFloatingBtn();
+}
+
+function renderHistoryFloatingBtn() {
+    if(isDashboardView) return;
+    const btn = document.getElementById('history-floating-btn');
+    if (orderHistory && orderHistory.length > 0) {
+        btn.classList.remove('hidden');
+    } else {
+        btn.classList.add('hidden');
+    }
+}
+
+function showHistoryModal() {
+    const container = document.getElementById('history-items');
+    container.innerHTML = '';
+    
+    if(orderHistory.length === 0) {
+        hideHistoryModal();
+        return;
+    }
+    
+    orderHistory.forEach(ord => {
+        let itemsHtml = '';
+        ord.items.forEach(itm => {
+            itemsHtml += `<div class="flex justify-between text-[10px] md:text-xs text-gray-500 mt-1"><span>${itm.qty}x ${itm.name}</span><span>${formatRupiah(itm.price * itm.qty)}</span></div>`;
+        });
         
-        cart = [];
-        const qtySpans = document.querySelectorAll('[id^="qty-"]');
-        qtySpans.forEach(span => span.innerText = '0');
-        document.getElementById('customer-name').value = '';
-        
-        updateCartUI();
-        hideCartModal();
-        showHistoryModal();
-        showToast('Pesanan berhasil dibuat!');
+        const div = document.createElement('div');
+        div.className = 'bg-white/60 p-3 rounded-2xl shadow-sm border border-gray-100 mb-3';
+        div.innerHTML = `
+            <div class="flex justify-between items-center mb-2 border-b border-gray-100 pb-2">
+                <span class="text-[9px] md:text-[10px] font-bold text-gray-400">${ord.date}</span>
+                <span class="text-[9px] md:text-[10px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded">Meja: ${ord.tableNumber}</span>
+            </div>
+            <p class="font-extrabold text-xs md:text-sm text-gray-800 mb-1">${ord.customerName}</p>
+            <div class="mb-2">
+                ${itemsHtml}
+            </div>
+            <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                <span class="font-bold text-[10px] md:text-xs text-gray-600">Total</span>
+                <span class="font-black text-red-600 text-xs md:text-sm">${formatRupiah(ord.total)}</span>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+    
+    document.getElementById('history-modal').classList.remove('hidden');
+}
+
+function hideHistoryModal() {
+    document.getElementById('history-modal').classList.add('hidden');
+}
+
+function clearHistory() {
+    showConfirmPopup('Apakah Anda yakin ingin menghapus semua data riwayat pesanan?', 'Hapus Riwayat', () => {
+        orderHistory = [];
+        localStorage.removeItem('restoHistory');
+        hideHistoryModal();
+        renderHistoryFloatingBtn();
+        showToast('Riwayat pesanan berhasil dihapus');
     });
 }
 
@@ -1653,6 +1783,8 @@ window.onload = () => {
     renderAdminTables();
     renderPublicCategories();
     renderPublic('all');
+    renderHistoryFloatingBtn();
+    
     if (sessionStorage.getItem('isLoggedIn') === 'true') {
         document.getElementById('nav-logout-top').classList.remove('hidden');
         document.getElementById('nav-dashboard-toggle').classList.remove('hidden');
