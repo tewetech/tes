@@ -130,20 +130,20 @@ body {
             <span id="store-closed-text">Merchant Sedang Tutup.</span>
         </div>
     </div>
-    <div id="public-menu-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5"></div>
+    <div id="public-menu-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1.5 md:gap-3"></div>
     <div class="mt-6 md:mt-8 mb-4 text-center w-full">
         <span class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide">Developer By </span>
         <a href="https://wa.me/6281234567890" target="_blank" class="text-[10px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
     </div>
 </div>
 
-<button id="floating-cart-btn" onclick="showCartModal()" class="animate-blink-slow fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60] bg-gradient-to-r from-red-600 to-orange-500 text-white rounded-full px-5 md:px-6 py-2.5 md:py-3 shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all hidden border border-white/50">
+<button id="floating-cart-btn" onclick="showCartModal()" class="animate-blink-slow fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60] bg-gradient-to-r from-red-600 to-orange-500 text-white rounded-full px-5 md:px-6 py-2.5 md:py-3 shadow-2xl flex items-center gap-2 transition-all hidden border border-white/50">
     <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
     <span class="font-extrabold text-xs md:text-sm">Pesanan</span>
     <span id="cart-badge" class="bg-white text-red-600 text-[10px] md:text-[11px] font-black h-4 md:h-5 min-w-[16px] md:min-w-[20px] rounded-full flex items-center justify-center px-1 md:px-1.5 shadow-md ml-1">0</span>
 </button>
 
-<button id="history-floating-btn" onclick="showHistoryModal()" style="top: 50%;" class="fixed right-0 transform -translate-y-1/2 z-[60] bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 rounded-l-full px-3 py-3 shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center gap-2 hover:bg-red-50 dark:hover:bg-gray-700 hover:pl-4 transition-all hidden border-y border-l border-gray-300 dark:border-gray-600 cursor-grab active:cursor-grabbing">
+<button id="history-floating-btn" onclick="showHistoryModal()" style="top: 50%;" class="fixed right-0 transform -translate-y-1/2 z-[60] bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 rounded-l-full px-3 py-3 shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center gap-2 hover:bg-red-50 dark:hover:bg-gray-700 transition-all hidden border-y border-l border-gray-300 dark:border-gray-600 cursor-grab active:cursor-grabbing">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 </button>
 
@@ -160,7 +160,7 @@ body {
         <div class="mb-3 md:mb-4">
             <input type="text" id="customer-name" class="block px-3 md:px-4 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 font-bold" placeholder="Masukkan Nama Anda" required />
         </div>
-        <button onclick="processCheckout()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all mt-auto flex items-center justify-center gap-2">
+        <button onclick="processCheckout()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm shadow-lg transition-all mt-auto flex items-center justify-center gap-2">
             <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
             Proses Pesanan
         </button>
@@ -177,7 +177,7 @@ body {
             <button onclick="hideHistoryModal()" class="text-gray-400 hover:text-red-500 text-xl md:text-2xl font-light transition-colors">&times;</button>
         </div>
         <div id="history-items" class="overflow-y-auto flex-grow mb-3 space-y-3 pr-1 scrollbar-hide"></div>
-        <button onclick="clearHistory()" class="w-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transform active:scale-95 transition-all mt-auto flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700">
+        <button onclick="clearHistory()" class="w-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-all mt-auto flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             Hapus Riwayat
         </button>
@@ -202,8 +202,8 @@ body {
                 <input type="password" id="password" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-xl border border-gray-300 dark:border-gray-600 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 peer transition-all font-medium" placeholder=" " required />
                 <label for="password" class="absolute text-xs md:text-sm text-gray-500 dark:text-gray-300 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-700 peer-focus:dark:bg-gray-700 px-2 left-2 peer-focus:text-red-600 peer-focus:dark:text-gray-200 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Password</label>
             </div>
-            <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 rounded-xl font-bold text-xs md:text-sm shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all mt-3 md:mt-4">Masuk</button>
-            <button type="button" onclick="showPublic()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 p-2.5 md:p-3 rounded-xl font-bold text-xs md:text-sm hover:scale-[1.02] hover:bg-gray-300 dark:hover:bg-gray-600 transform active:scale-95 transition-all">Batal</button>
+            <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 rounded-xl font-bold text-xs md:text-sm shadow-lg transition-all mt-3 md:mt-4">Masuk</button>
+            <button type="button" onclick="showPublic()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 p-2.5 md:p-3 rounded-xl font-bold text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">Batal</button>
         </form>
     </div>
 </div>
@@ -303,11 +303,11 @@ body {
                             </label>
                             <input type="file" id="menu-image" accept="image/*" class="w-full text-[10px] md:text-xs text-gray-600 dark:text-gray-300 file:mr-3 md:file:mr-4 file:py-1 file:md:py-1.5 file:px-3 file:md:px-4 file:rounded-full file:border-0 file:text-[10px] file:md:text-xs file:font-semibold file:bg-red-50 file:dark:bg-red-900/30 file:text-red-700 file:dark:text-red-400 hover:file:bg-red-100 cursor-pointer">
                         </div>
-                        <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg transition-all flex justify-center items-center gap-2 mt-auto hover:scale-[1.02] active:scale-95">
+                        <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg transition-all flex justify-center items-center gap-2 mt-auto">
                             <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                             Simpan Menu
                         </button>
-                        <button type="button" onclick="resetForm()" class="bg-gray-400 dark:bg-gray-600 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg transition-all hidden justify-center items-center gap-2 hover:scale-[1.02] active:scale-95" id="btn-cancel">
+                        <button type="button" onclick="resetForm()" class="bg-gray-400 dark:bg-gray-600 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg transition-all hidden justify-center items-center gap-2" id="btn-cancel">
                             <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             Batal
                         </button>
@@ -323,7 +323,7 @@ body {
                         <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                         Manajemen Menu
                     </h2>
-                    <button type="button" onclick="deleteAllMenus()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
+                    <button type="button" onclick="deleteAllMenus()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md transition-all flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
@@ -344,11 +344,11 @@ body {
                         <input type="text" id="cat-name" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-xl border border-gray-300 dark:border-gray-600 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 peer transition-all font-medium" placeholder=" " required />
                         <label for="cat-name" class="absolute text-[10px] md:text-xs text-gray-500 dark:text-gray-300 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-700 peer-focus:dark:bg-gray-700 px-2 left-2 peer-focus:text-red-600 peer-focus:dark:text-gray-200 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Nama Kategori</label>
                     </div>
-                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
                         <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                         Simpan Kategori
                     </button>
-                    <button type="button" onclick="resetCategoryForm()" class="bg-gray-400 dark:bg-gray-600 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all hidden justify-center items-center gap-2" id="btn-cancel-cat">
+                    <button type="button" onclick="resetCategoryForm()" class="bg-gray-400 dark:bg-gray-600 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 transition-all hidden flex justify-center items-center gap-2" id="btn-cancel-cat">
                         <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         Batal
                     </button>
@@ -360,7 +360,7 @@ body {
                         <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h10a4 4 0 004-4M3 15v-4c0-3.313 2.686-6 6-6h6c3.314 0 6 2.687 6 6v4M3 15h18M9 5v4m6-4v4"></path></svg>
                         Manajemen Kategori
                     </h2>
-                    <button type="button" onclick="deleteAllCategories()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
+                    <button type="button" onclick="deleteAllCategories()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md transition-all flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
@@ -380,7 +380,7 @@ body {
                         <input type="text" id="setting-base-url" class="block px-3 py-2.5 md:py-3 w-full text-xs md:text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-xl border border-gray-300 dark:border-gray-600 appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 peer transition-all font-medium" placeholder=" " required />
                         <label for="setting-base-url" class="absolute text-[10px] md:text-xs text-gray-500 dark:text-gray-300 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-700 peer-focus:dark:bg-gray-700 px-2 left-2 peer-focus:text-red-600 peer-focus:dark:text-gray-200 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rounded-full pointer-events-none">Base URL Web</label>
                     </div>
-                    <button onclick="generateNextTable()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2">
+                    <button onclick="generateNextTable()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg transition-all flex justify-center items-center gap-2">
                         <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         Buat QR Meja
                     </button>
@@ -394,7 +394,7 @@ body {
                             <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"></path></svg>
                             Daftar QR Meja
                         </h2>
-                        <button type="button" onclick="deleteAllTables()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
+                        <button type="button" onclick="deleteAllTables()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md transition-all flex items-center gap-1">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             Hapus Semua
                         </button>
@@ -432,11 +432,11 @@ body {
                             </label>
                         </div>
                     </div>
-                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-3 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-3 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
                         <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                         Simpan Data User
                     </button>
-                    <button type="button" onclick="resetUserForm()" class="bg-gray-400 dark:bg-gray-600 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-3 hover:scale-[1.02] transform active:scale-95 transition-all hidden justify-center items-center gap-2" id="btn-cancel-user">
+                    <button type="button" onclick="resetUserForm()" class="bg-gray-400 dark:bg-gray-600 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-3 transition-all hidden flex justify-center items-center gap-2" id="btn-cancel-user">
                         <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         Batal
                     </button>
@@ -448,7 +448,7 @@ body {
                         <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         Manajemen User
                     </h2>
-                    <button type="button" id="btn-delete-all-users" onclick="deleteAllUsers()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1">
+                    <button type="button" id="btn-delete-all-users" onclick="deleteAllUsers()" class="bg-gradient-to-r from-red-600 to-orange-500 text-white px-2.5 md:px-3 py-1.5 text-[9px] md:text-xs rounded-lg font-bold shadow-md transition-all flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Hapus Semua
                     </button>
@@ -490,7 +490,7 @@ body {
                         <input type="file" id="setting-favicon" accept="image/*" class="w-full text-[10px] md:text-xs text-gray-600 dark:text-gray-300 file:mr-3 md:file:mr-4 file:py-1 file:md:py-1.5 file:px-3 file:md:px-4 file:rounded-full file:border-0 file:text-[10px] file:md:text-xs file:font-semibold file:bg-red-50 file:dark:bg-red-900/30 file:text-red-700 file:dark:text-red-400 hover:file:bg-red-100 cursor-pointer">
                         <div id="preview-favicon" class="mt-2 hidden"><img src="" class="h-8 md:h-10 w-8 md:h-10 object-contain rounded"></div>
                     </div>
-                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 hover:scale-[1.02] transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-orange-500 text-white p-2.5 md:p-3 text-xs md:text-sm rounded-xl font-bold shadow-lg md:col-span-2 transition-all flex justify-center items-center gap-2 mt-1 md:mt-2">
                         <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                         Simpan Pengaturan
                     </button>
@@ -520,7 +520,7 @@ body {
         </div>
         <h3 class="text-lg md:text-xl font-extrabold text-gray-800 dark:text-gray-100 mb-2">Konfirmasi Pesanan</h3>
         <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mb-5 md:mb-6 whitespace-pre-line">List pesanan akan dikirimkan melalui WhatsApp. Silakan datang ke kasir untuk membayar terlebih dahulu dengan menunjukkan bukti WA-nya.</p>
-        <button onclick="confirmExecuteCheckout()" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 md:py-3 rounded-xl font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all text-xs md:text-sm">OK, Mengerti</button>
+        <button onclick="confirmExecuteCheckout()" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 md:py-3 rounded-xl font-bold shadow-lg transition-all text-xs md:text-sm">OK, Mengerti</button>
     </div>
 </div>
 
@@ -528,7 +528,7 @@ body {
     <div class="bg-white dark:bg-gray-800 p-5 md:p-6 rounded-3xl shadow-2xl max-w-xs md:max-w-sm w-11/12 transform transition-all text-center border border-gray-300 dark:border-gray-700">
         <h3 class="text-lg md:text-xl font-extrabold text-gray-800 dark:text-gray-100 mb-2" id="popup-title"></h3>
         <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mb-5 md:mb-6 whitespace-pre-line" id="popup-message"></p>
-        <button onclick="closePopup()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all text-xs md:text-sm">Tutup</button>
+        <button onclick="closePopup()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold shadow-lg transition-all text-xs md:text-sm">Tutup</button>
     </div>
 </div>
 
@@ -540,8 +540,8 @@ body {
         <h3 class="text-base md:text-lg font-extrabold text-gray-800 dark:text-gray-100 mb-2" id="confirm-title">Konfirmasi</h3>
         <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mb-5 md:mb-6 whitespace-pre-line" id="confirm-message"></p>
         <div class="flex gap-2 md:gap-3 w-full">
-            <button onclick="closeConfirmPopup()" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95 transition-all">Batal</button>
-            <button onclick="executeConfirm()" class="flex-1 bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm shadow-lg hover:scale-[1.02] active:scale-95 transition-all">Ya, Lanjutkan</button>
+            <button onclick="closeConfirmPopup()" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">Batal</button>
+            <button onclick="executeConfirm()" class="flex-1 bg-gradient-to-r from-red-600 to-orange-500 text-white py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm shadow-lg transition-all">Ya, Lanjutkan</button>
         </div>
     </div>
 </div>
@@ -551,9 +551,9 @@ body {
         <h3 class="text-base md:text-lg font-extrabold text-gray-800 dark:text-gray-100 mb-2">Konfirmasi Keluar</h3>
         <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mb-5 md:mb-6">Ada perubahan data yang belum disimpan. Apakah Anda ingin menyimpannya?</p>
         <div class="flex flex-col gap-2 w-full">
-            <button onclick="executeLogout(true)" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 rounded-xl font-bold text-xs md:text-sm shadow-lg hover:scale-[1.02] active:scale-95 transition-all">Simpan & Keluar</button>
-            <button onclick="executeLogout(false)" class="w-full bg-red-500 text-white py-2.5 rounded-xl font-bold text-xs md:text-sm shadow-lg hover:scale-[1.02] active:scale-95 transition-all">Keluar Tanpa Menyimpan</button>
-            <button onclick="closeLogoutPopup()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2.5 rounded-xl font-bold text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95 transition-all">Batal</button>
+            <button onclick="executeLogout(true)" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 rounded-xl font-bold text-xs md:text-sm shadow-lg transition-all">Simpan & Keluar</button>
+            <button onclick="executeLogout(false)" class="w-full bg-red-500 text-white py-2.5 rounded-xl font-bold text-xs md:text-sm shadow-lg transition-all">Keluar Tanpa Menyimpan</button>
+            <button onclick="closeLogoutPopup()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2.5 rounded-xl font-bold text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">Batal</button>
         </div>
     </div>
 </div>
@@ -777,7 +777,6 @@ function onDragStartHistory(e) {
     startYHistory = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
     startTopHistory = parseInt(window.getComputedStyle(historyBtn).top, 10);
     historyBtn.style.transition = 'none';
-    historyBtn.classList.add('scale-105');
 }
 
 function onDragMoveHistory(e) {
@@ -795,7 +794,6 @@ function onDragMoveHistory(e) {
 function onDragEndHistory() {
     isDraggingHistory = false;
     historyBtn.style.transition = 'all 0.3s ease';
-    historyBtn.classList.remove('scale-105');
 }
 
 historyBtn.addEventListener('mousedown', onDragStartHistory);
@@ -1304,7 +1302,7 @@ function renderAdminUsers() {
     
     users.forEach(usr => {
         const div = document.createElement('div');
-        div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-gray-300 dark:border-gray-600 flex flex-col gap-2 relative transition-all hover:scale-[1.02]';
+        div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-gray-300 dark:border-gray-600 flex flex-col gap-2 relative transition-all';
         const roleLabel = usr.role === 'staff' ? '<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md text-[9px] md:text-[10px] font-bold uppercase">Staff</span>' : '<span class="bg-red-100 text-red-700 px-2 py-1 rounded-md text-[9px] md:text-[10px] font-bold uppercase">Manager</span>';
         
         let actionButtons = '';
@@ -1425,7 +1423,7 @@ function renderAdminCategories() {
     const sortedCats = categories.slice().sort((a,b) => a.name.localeCompare(b.name));
     sortedCats.forEach(cat => {
         const div = document.createElement('div');
-        div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-gray-300 dark:border-gray-600 flex justify-between items-center transition-all hover:scale-[1.02]';
+        div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-gray-300 dark:border-gray-600 flex justify-between items-center transition-all';
         div.innerHTML = `
             <span class="font-bold text-gray-800 dark:text-gray-100 text-xs md:text-sm break-words">${cat.name}</span>
             <div class="flex gap-1">
@@ -1461,8 +1459,8 @@ function renderAdminCategoryFilters() {
     const btnAll = document.createElement('button');
     btnAll.onclick = () => { activeAdminMenuFilter = 'all'; renderAdminCategoryFilters(); renderAdminMenus(); };
     btnAll.className = activeAdminMenuFilter === 'all' 
-        ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold shadow-md transform active:scale-95 transition-all' 
-        : 'bg-white dark:bg-gray-700 text-red-600 dark:text-red-400 px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold border border-red-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transform active:scale-95 transition-all';
+        ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold shadow-md transition-all' 
+        : 'bg-white dark:bg-gray-700 text-red-600 dark:text-red-400 px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold border border-red-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all';
     btnAll.innerText = 'Semua';
     container.appendChild(btnAll);
 
@@ -1471,8 +1469,8 @@ function renderAdminCategoryFilters() {
         const btn = document.createElement('button');
         btn.onclick = () => { activeAdminMenuFilter = cat.id; renderAdminCategoryFilters(); renderAdminMenus(); };
         btn.className = activeAdminMenuFilter === cat.id 
-            ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold shadow-md transform active:scale-95 transition-all' 
-            : 'bg-white dark:bg-gray-700 text-red-600 dark:text-red-400 px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold border border-red-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transform active:scale-95 transition-all';
+            ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold shadow-md transition-all' 
+            : 'bg-white dark:bg-gray-700 text-red-600 dark:text-red-400 px-3 md:px-5 py-1.5 rounded-full text-[9px] md:text-xs font-semibold border border-red-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all';
         btn.innerText = cat.name;
         container.appendChild(btn);
     });
@@ -1668,7 +1666,7 @@ function renderAdminMenus() {
             const isTersedia = menu.status === 'tersedia';
             
             const div = document.createElement('div');
-            div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-gray-300 dark:border-gray-600 flex flex-col gap-2 md:gap-3 relative transition-all hover:scale-[1.02] bg-white/70 dark:bg-gray-800/70';
+            div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-gray-300 dark:border-gray-600 flex flex-col gap-2 md:gap-3 relative transition-all bg-white/70 dark:bg-gray-800/70';
             
             div.innerHTML = `
                 <div class="flex items-center gap-2 md:gap-3">
@@ -1760,7 +1758,7 @@ function renderAdminTables() {
     const sortedTables = tablesData.tables.slice().sort((a, b) => a - b.num);
     sortedTables.forEach(t => {
         const div = document.createElement('div');
-        div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-gray-300 dark:border-gray-600 flex flex-col md:flex-row items-center justify-between gap-3 transition-all hover:scale-[1.01]';
+        div.className = 'glass-effect p-3 md:p-4 rounded-xl shadow-sm border border-gray-300 dark:border-gray-600 flex flex-col md:flex-row items-center justify-between gap-3 transition-all';
         div.innerHTML = `
             <div class="flex items-center gap-3 w-full md:w-auto">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(t.url)}" class="w-16 h-16 object-contain bg-white p-1 border dark:border-gray-600 rounded shadow-sm flex-shrink-0">
@@ -1824,7 +1822,7 @@ function renderPublic(filter) {
 
     filteredMenus.forEach(menu => {
         const div = document.createElement('div');
-        div.className = 'glass-effect rounded-2xl overflow-hidden flex flex-col border border-gray-300 dark:border-gray-600 shadow-sm transition-transform hover:scale-[1.01]';
+        div.className = 'glass-effect rounded-2xl overflow-hidden flex flex-col border border-gray-300 dark:border-gray-600 shadow-sm transition-colors';
         const isHabis = menu.status === 'habis';
         const catObj = categories.find(c => c.id === menu.category);
         const catName = catObj ? catObj.name : menu.category;
@@ -1833,22 +1831,22 @@ function renderPublic(filter) {
         const qty = cartItem ? cartItem.qty : 0;
 
         div.innerHTML = `
-            <div class="relative w-full aspect-[4/3] overflow-hidden flex-shrink-0 border-b border-gray-300 dark:border-gray-700/50">
+            <div class="relative w-full aspect-square overflow-hidden flex-shrink-0 border-b border-gray-300 dark:border-gray-700/50">
                 <img src="${menu.image}" class="w-full h-full object-cover">
-                ${storeClosed ? '<div class="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px] flex items-center justify-center"><span class="text-white font-extrabold tracking-widest text-[9px] md:text-lg bg-gray-600/90 px-2 md:px-4 py-1 md:py-1.5 rounded-lg shadow-lg border border-gray-400">TUTUP</span></div>' : (isHabis ? '<div class="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px] flex items-center justify-center"><span class="text-white font-extrabold tracking-widest text-[9px] md:text-lg bg-red-500/90 px-2 md:px-4 py-1 md:py-1.5 rounded-lg shadow-lg border border-red-400">HABIS</span></div>' : '')}
+                ${storeClosed ? '<div class="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px] flex items-center justify-center"><span class="text-white font-extrabold tracking-widest text-[8px] md:text-xs bg-gray-600/90 px-1.5 md:px-3 py-0.5 md:py-1 rounded-lg shadow-lg border border-gray-400">TUTUP</span></div>' : (isHabis ? '<div class="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px] flex items-center justify-center"><span class="text-white font-extrabold tracking-widest text-[8px] md:text-xs bg-red-500/90 px-1.5 md:px-3 py-0.5 md:py-1 rounded-lg shadow-lg border border-red-400">HABIS</span></div>' : '')}
             </div>
-            <div class="p-2 md:p-4 flex flex-col flex-grow bg-white/30 dark:bg-gray-800/50">
-                <div class="flex flex-col md:flex-row justify-between items-start mb-1 md:mb-1.5 gap-1 md:gap-2">
-                    <h3 class="text-xs md:text-base font-extrabold text-gray-800 dark:text-gray-100 leading-tight">${menu.name}</h3>
-                    <span class="text-[7px] md:text-[9px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded whitespace-nowrap">${catName}</span>
+            <div class="p-1.5 md:p-2 flex flex-col flex-grow bg-white/30 dark:bg-gray-800/50">
+                <div class="flex flex-col md:flex-row justify-between items-start mb-1 gap-1">
+                    <h3 class="text-[10px] md:text-xs font-extrabold text-gray-800 dark:text-gray-100 leading-tight">${menu.name}</h3>
+                    <span class="text-[6px] md:text-[7px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded whitespace-nowrap">${catName}</span>
                 </div>
-                <p class="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-400 dark:to-orange-300 font-black text-xs md:text-base mb-1 md:mb-2">${formatRupiah(menu.price)}</p>
-                <p class="text-gray-500 dark:text-gray-400 text-[9px] md:text-xs mb-2 md:mb-4 flex-grow leading-relaxed line-clamp-2">${menu.desc}</p>
+                <p class="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-400 dark:to-orange-300 font-black text-[10px] md:text-xs mb-1">${formatRupiah(menu.price)}</p>
+                <p class="text-gray-500 dark:text-gray-400 text-[7px] md:text-[9px] mb-2 flex-grow leading-relaxed line-clamp-2">${menu.desc}</p>
                 
-                <div class="flex items-center justify-between bg-white/50 dark:bg-gray-700/50 rounded-lg md:rounded-xl p-1 shadow-inner border border-gray-300 dark:border-gray-600 mt-auto">
-                    <button onclick="updateStepper('${menu.id}', -1)" class="w-6 h-6 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-white dark:bg-gray-600 text-gray-800 dark:text-gray-100 font-extrabold text-sm md:text-lg shadow-sm hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-500 transition-colors flex items-center justify-center" ${isHabis || storeClosed ? 'disabled' : ''}>&minus;</button>
-                    <span id="qty-${menu.id}" class="font-extrabold w-6 md:w-10 text-center text-red-700 dark:text-red-400 text-xs md:text-base">${qty}</span>
-                    <button onclick="updateStepper('${menu.id}', 1)" class="w-6 h-6 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-gradient-to-r from-red-600 to-orange-500 text-white font-extrabold text-sm md:text-lg shadow-sm hover:scale-[1.05] active:scale-95 transition-all flex items-center justify-center" ${isHabis || storeClosed ? 'disabled' : ''}>&plus;</button>
+                <div class="flex items-center justify-between bg-white/50 dark:bg-gray-700/50 rounded-lg p-1 shadow-inner border border-gray-300 dark:border-gray-600 mt-auto">
+                    <button onclick="updateStepper('${menu.id}', -1)" class="w-5 h-5 md:w-6 md:h-6 rounded-md bg-white dark:bg-gray-600 text-gray-800 dark:text-gray-100 font-extrabold text-xs md:text-sm shadow-sm hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-500 transition-colors flex items-center justify-center" ${isHabis || storeClosed ? 'disabled' : ''}>&minus;</button>
+                    <span id="qty-${menu.id}" class="font-extrabold w-5 md:w-6 text-center text-red-700 dark:text-red-400 text-[9px] md:text-xs">${qty}</span>
+                    <button onclick="updateStepper('${menu.id}', 1)" class="w-5 h-5 md:w-6 md:h-6 rounded-md bg-gradient-to-r from-red-600 to-orange-500 text-white font-extrabold text-xs md:text-sm shadow-sm transition-colors flex items-center justify-center" ${isHabis || storeClosed ? 'disabled' : ''}>&plus;</button>
                 </div>
             </div>
         `;
@@ -1949,7 +1947,7 @@ function renderCartItems() {
             <div class="flex items-center gap-1 md:gap-2 bg-gray-100 dark:bg-gray-800 rounded-full p-1 shadow-inner">
                 <button onclick="updateStepper('${item.id}', -1)" class="w-5 h-5 md:w-7 md:h-7 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold flex items-center justify-center shadow-sm hover:text-red-500 dark:hover:text-red-400 transition-colors text-xs md:text-sm">&minus;</button>
                 <span class="font-bold w-4 md:w-5 text-center text-[10px] md:text-xs text-gray-800 dark:text-gray-100">${item.qty}</span>
-                <button onclick="updateStepper('${item.id}', 1)" class="w-5 h-5 md:w-7 md:h-7 rounded-full bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold flex items-center justify-center shadow-sm hover:scale-105 transition-all text-xs md:text-sm">&plus;</button>
+                <button onclick="updateStepper('${item.id}', 1)" class="w-5 h-5 md:w-7 md:h-7 rounded-full bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold flex items-center justify-center shadow-sm transition-colors text-xs md:text-sm">&plus;</button>
             </div>
         `;
         container.appendChild(div);
