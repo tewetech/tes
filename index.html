@@ -89,7 +89,7 @@ body {
 
 <div id="global-loader" class="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/70 backdrop-blur-md transition-opacity">
     <div class="spinner mb-4"></div>
-    <span class="text-sm font-bold text-gray-700 dark:text-gray-200" id="loader-text">Memuat Data...</span>
+    <span class="text-sm font-bold text-gray-700 dark:text-gray-200" id="loader-text">Memuat Menu..</span>
 </div>
 
 <nav class="glass-effect flex-shrink-0 z-50 p-3 flex justify-between items-center w-full border-b border-gray-300 dark:border-gray-700/50">
@@ -678,7 +678,7 @@ function isStoreOpen() {
     }
 }
 
-function showLoading(text = 'Memuat Data...') {
+function showLoading(text = 'Memuat Menu..') {
     document.getElementById('loader-text').innerText = text;
     document.getElementById('global-loader').classList.remove('hidden');
 }
