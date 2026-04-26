@@ -133,7 +133,7 @@ body {
     <div id="public-menu-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1.5 md:gap-3"></div>
     <div class="mt-6 md:mt-8 mb-4 text-center w-full">
         <span class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide">Developer By </span>
-        <a href="https://wa.me/6281234567890" target="_blank" class="text-[10px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
+        <a href="https://wa.me/6282323624177" target="_blank" class="text-[10px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
     </div>
 </div>
 
@@ -497,7 +497,7 @@ body {
         </div>
         <div class="mt-4 md:mt-6 mb-20 md:mb-6 text-center w-full">
             <span class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide">Developer By </span>
-            <a href="https://wa.me/6281234567890" target="_blank" class="text-[10px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
+            <a href="https://wa.me/6282323624177" target="_blank" class="text-[10px] md:text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-500 hover:opacity-80 transition-opacity">Tewe Tech</a>
         </div>
     </div>
 </div>
@@ -906,14 +906,14 @@ async function saveSettings(e) {
     const logoFile = document.getElementById('setting-logo').files[0];
     let logoData = null;
     if (logoFile) {
-        logoData = await getBase64(logoFile);
+        logoData = await getBase64Original(logoFile);
         storeSettings.logo = logoData;
     }
 
     const faviconFile = document.getElementById('setting-favicon').files[0];
     let faviconData = null;
     if (faviconFile) {
-        faviconData = await getBase64(faviconFile);
+        faviconData = await getBase64Original(faviconFile);
         storeSettings.favicon = faviconData;
     }
 
@@ -1196,6 +1196,15 @@ function getBase64(file) {
             img.onerror = () => reject(new Error('Gagal memproses gambar'));
             img.src = e.target.result;
         };
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
+
+function getBase64Original(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
         reader.onerror = error => reject(error);
         reader.readAsDataURL(file);
     });
